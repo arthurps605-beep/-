@@ -1,0 +1,305 @@
+/* ============================================
+   Gra klasyfikacji zapasów – style
+   ============================================ */
+
+/* Zapobieganie podświetlaniu i zaznaczaniu na urządzeniach dotykowych */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+html {
+    touch-action: manipulation;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f0f4f8;
+    color: #2c3e50;
+}
+
+#app {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Ekrany – tylko jeden aktywny */
+.screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* ========== Ekran startowy ========== */
+#screen-start .title {
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
+    margin: 0 0 1.5rem;
+    color: #1a252f;
+}
+
+#screen-start label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+#nick-input {
+    width: 100%;
+    max-width: 280px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #bdc3c7;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+#nick-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: #3498db;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+/* ========== Wybór poziomu ========== */
+.level-prompt {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.level-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.btn-level {
+    min-width: 100px;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    background: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-level:hover {
+    background: #27ae60;
+}
+
+/* ========== Rozgrywka ========== */
+#screen-game {
+    max-width: 100%;
+    padding: 0.5rem;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#game-score { color: #27ae60; }
+#game-timer { color: #e74c3c; }
+
+/* Kategorie klasyfikacji: proste pudła z literą (A/B/C, X/Y/Z, F/S/N, V/E/D) */
+.bin-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.bin-box {
+    display: inline-block;
+    position: relative;
+}
+
+.bin {
+    min-width: 90px;
+    min-height: 100px;
+    border: 3px dashed #34495e;
+    border-radius: 12px;
+    background: #ecf0f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    transition: background 0.2s;
+}
+
+.bin.bin-highlight {
+    background: #d5f4e6;
+    border-color: #27ae60;
+}
+
+/* Kontener na jeden przedmiot (jak w oryginale: item-container) */
+.item-container.items-area {
+    position: relative;
+    min-height: 180px;
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid #dfe6e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Przedmiot (placeholder – kolorowa skrzynka z tekstem) */
+.item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: grab;
+    margin: 0.25rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    min-width: 80px;
+    min-height: 50px;
+}
+
+.item:active {
+    cursor: grabbing;
+}
+
+.item.ui-draggable-dragging {
+    z-index: 1000;
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Placeholder przedmioty – kolory według kategorii (data-type); później można dodać zdjęcia */
+.item[data-type="A"] { background: #e8f6f3; color: #1abc9c; border: 2px solid #1abc9c; }
+.item[data-type="B"] { background: #fef9e7; color: #f39c12; border: 2px solid #f39c12; }
+.item[data-type="C"] { background: #fdedec; color: #e74c3c; border: 2px solid #e74c3c; }
+.item[data-type="X"] { background: #ebf5fb; color: #3498db; border: 2px solid #3498db; }
+.item[data-type="Y"] { background: #e8daef; color: #9b59b6; border: 2px solid #9b59b6; }
+.item[data-type="Z"] { background: #fdebd0; color: #d35400; border: 2px solid #d35400; }
+.item[data-type="F"] { background: #d5f5e3; color: #27ae60; border: 2px solid #27ae60; }
+.item[data-type="S"] { background: #fdebd0; color: #e67e22; border: 2px solid #e67e22; }
+.item[data-type="N"] { background: #e5e8e8; color: #5d6d7e; border: 2px solid #5d6d7e; }
+.item[data-type="V"] { background: #fadbd8; color: #c0392b; border: 2px solid #c0392b; }
+.item[data-type="E"] { background: #fcf3cf; color: #b7950b; border: 2px solid #b7950b; }
+.item[data-type="D"] { background: #d6eaf8; color: #2980b9; border: 2px solid #2980b9; }
+
+/* ========== Ekran wyników ========== */
+.results-score {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1rem 0 1.5rem;
+}
+
+.results-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+/* ========== Ranking ========== */
+.leaderboard-list {
+    text-align: left;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 1.5rem;
+    max-width: 320px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.leaderboard-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.leaderboard-list li:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-list .rank {
+    font-weight: 700;
+    color: #7f8c8d;
+}
+
+.leaderboard-list .name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-list .score {
+    font-weight: 700;
+    color: #27ae60;
+}

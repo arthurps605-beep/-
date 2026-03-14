@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#2c3e50">
+    <title>Gra klasyfikacji zapasów</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Ekran startowy -->
+        <section id="screen-start" class="screen active">
+            <h1 class="title">Gra klasyfikacji zapasów</h1>
+            <label for="nick-input">Wpisz swój nick</label>
+            <input type="text" id="nick-input" placeholder="Nick" maxlength="30" autocomplete="off">
+            <button type="button" id="btn-start" class="btn btn-primary">Rozpocznij</button>
+        </section>
+
+        <!-- Wybór poziomu (system klasyfikacji) -->
+        <section id="screen-levels" class="screen">
+            <p class="level-prompt">Wybierz system klasyfikacji</p>
+            <div class="level-buttons">
+                <button type="button" class="btn btn-level" data-system="ABC">ABC</button>
+                <button type="button" class="btn btn-level" data-system="XYZ">XYZ</button>
+                <button type="button" class="btn btn-level" data-system="FSN">FSN</button>
+                <button type="button" class="btn btn-level" data-system="VED">VED</button>
+            </div>
+        </section>
+
+        <!-- Rozgrywka -->
+        <section id="screen-game" class="screen">
+            <header class="game-header">
+                <span id="game-score">Punkty: 0</span>
+                <span id="game-timer">Czas: 30</span>
+            </header>
+            <div class="bin-container" id="bins-row"></div>
+            <div class="item-container items-area" id="items-area"></div>
+        </section>
+
+        <!-- Wyniki po rundzie -->
+        <section id="screen-results" class="screen">
+            <h2>Wynik</h2>
+            <p id="results-score" class="results-score">Punkty: 0</p>
+            <div class="results-buttons">
+                <button type="button" id="btn-leaderboard" class="btn btn-primary">Ranking</button>
+                <button type="button" id="btn-play-again" class="btn btn-secondary">Zagraj ponownie</button>
+            </div>
+        </section>
+
+        <!-- Ranking graczy -->
+        <section id="screen-leaderboard" class="screen">
+            <h2>Ranking graczy</h2>
+            <ol id="leaderboard-list" class="leaderboard-list"></ol>
+            <button type="button" id="btn-back-start" class="btn btn-primary">Powrót do startu</button>
+        </section>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
