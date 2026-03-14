@@ -119,10 +119,10 @@
         $('#game-score').text('Punkty: ' + currentScore);
         $('#game-timer').text('Czas: ' + timeLeft);
 
-        // Kategorie jako proste pudła z literą (odpowiednik bin-box + bin w oryginale)
+        // Cele sortowania: tylko litery (A, B, C / X, Y, Z / F, S, N / V, E, D) – bez grafik „baków”
         var binsHtml = '';
-        sys.bins.forEach(function (binId) {
-            binsHtml += '<div class="bin-box"><div class="bin" data-type="' + binId + '">' + binId + '</div></div>';
+        sys.bins.forEach(function (letter) {
+            binsHtml += '<div class="bin-box"><div class="bin" data-type="' + letter + '">' + letter + '</div></div>';
         });
         $('#bins-row').empty().append(binsHtml);
 
