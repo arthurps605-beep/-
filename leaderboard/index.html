@@ -68,9 +68,9 @@
         <h1>Ranking</h1>
         <p id="status" class="loading">Ładowanie…</p>
         <ol id="list" hidden></ol>
-        <a class="back" href="../index.html">← Wróć do gry</a>
+        <a class="back" href="/index.html">← Wróć do gry</a>
     </div>
-    <script src="../jsonbin-leaderboard.js"></script>
+    <script src="/jsonbin-leaderboard.js"></script>
     <script>
         (function () {
             var statusEl = document.getElementById('status');
@@ -82,7 +82,8 @@
                 listEl.innerHTML = '';
                 if (!scores.length) {
                     var empty = document.createElement('li');
-                    empty.textContent = 'Brak wyników.';
+                    empty.textContent =
+                        'Jeszcze nikt nie zapisał wyniku. Zagraj do końca (ekran „Wynik”) — wtedy wynik trafi tutaj automatycznie.';
                     listEl.appendChild(empty);
                     return;
                 }
@@ -102,12 +103,17 @@
                 return;
             }
 
-            fetchLeaderboardScores().then(function (scores) {
-                render(scores);
-            }).catch(function (e) {
-                console.error(e);
-                statusEl.textContent = 'Nie udało się załadować rankingu.';
-            });
+            fetchLeaderboardScores()
+                .then(function (scores) {
+                    render(scores);
+                })
+                .catch(function (e) {
+                    console.error(e);
+                    statusEl.hidden = false;
+                    statusEl.textContent =
+                        'Nie udało się załadować rankingu. Sprawdź konsolę (F12) lub spróbuj ponownie później.';
+                    listEl.hidden = true;
+                });
         })();
     </script>
 </body>
