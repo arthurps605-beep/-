@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#5c6bc0">
+    <title>Gra klasyfikacji zapasów</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Ekran startowy -->
+        <section id="screen-start" class="screen active">
+            <h1 class="title">Gra klasyfikacji zapasów</h1>
+            <label for="nick-input">Wpisz swój nick</label>
+            <input type="text" id="nick-input" placeholder="Nick" maxlength="30" autocomplete="off">
+            <button type="button" id="btn-start" class="btn btn-primary">Rozpocznij</button>
+        </section>
+
+        <!-- Rozgrywka (jeden przedmiot, 3 strefy w rzędzie) -->
+        <section id="screen-game" class="screen screen-game-mobile">
+            <div class="game-container">
+                <header class="game-top-bar">
+                    <p id="game-progress" class="game-progress"></p>
+                    <div class="timer-wrap">
+                        <span id="timer-label" class="stat-label">Round</span>
+                        <p class="game-timer-display"><strong id="game-timer">30</strong><span>s</span></p>
+                    </div>
+                    <p class="score-display">Score: <strong id="game-score">0</strong></p>
+                    <button type="button" id="btn-quit-game" class="btn-icon" aria-label="Zakończ">✕</button>
+                </header>
+
+                <div class="game-stage">
+                    <div id="current-item-slot" class="current-item-slot">
+                        <!-- jedna karta: ikona + nazwa (wstrzykiwane przez JS) -->
+                    </div>
+
+                    <div id="game-feedback" class="game-feedback" aria-live="polite"></div>
+
+                    <p id="game-hint" class="game-hint">Przeciągnij obraz do właściwej kategorii.</p>
+
+                    <div id="drop-zones" class="drop-zones-row">
+                        <!-- 3 strefy – etykiety przez JS wg SYSTEMS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wyniki po rundzie -->
+        <section id="screen-results" class="screen">
+            <h2>Wynik</h2>
+            <p id="results-score" class="results-score">Punkty: 0</p>
+            <div class="results-buttons">
+                <button type="button" id="btn-leaderboard" class="btn btn-primary">Ranking</button>
+                <button type="button" id="btn-play-again" class="btn btn-secondary">Zagraj ponownie</button>
+            </div>
+        </section>
+
+        <!-- Ranking graczy -->
+        <section id="screen-leaderboard" class="screen">
+            <h2>Ranking graczy</h2>
+            <ol id="leaderboard-list" class="leaderboard-list"></ol>
+            <button type="button" id="btn-back-start" class="btn btn-primary">Powrót do startu</button>
+        </section>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
