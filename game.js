@@ -189,7 +189,6 @@
                 endGame('all-items-complete');
                 return;
             }
-            $('#game-feedback').removeClass('ok bad').addClass('show').text('Round completed.');
             startBreak();
             return;
         }
@@ -215,15 +214,30 @@
         return ITEM_IMAGE_BASE_PATH + filename;
     }
 
+    /** Bin header images: Aassets/Subjekt/[file].png per system + letter */
+    function binImageFilenameFor(system, letter) {
+        var map = {
+            ABC: { A: 'abc_a.png', B: 'abc_b.png', C: 'abc_c.png' },
+            XYZ: { X: 'xyz_x.png', Y: 'xyz_y.png', Z: 'xyz_z.png' },
+            FSN: { F: 'fsn_f.png', S: 'fsn_s.png', N: 'fsn_n.png' },
+            VED: { V: 'ved_v.png', E: 'ved_e.png', D: 'ved_d.png' }
+        };
+        return map[system] && map[system][letter] ? map[system][letter] : '';
+    }
+
     function buildDropZones() {
         var bins = SYSTEMS[currentSystem].bins;
         var html = '';
         bins.forEach(function (letter) {
+            var binFile = binImageFilenameFor(currentSystem, letter);
+            var src = binFile ? escapeHtml(getItemImagePath(binFile)) : '';
             html += '<div class="drop-zone bin"';
             html += ' data-bin="' + letter + '"';
             html += ' data-category="' + letter + '"';
             html += ' role="button" aria-label="Category ' + letter + '">';
-            html += '<span class="drop-zone-label">' + letter + '</span>';
+            if (src) {
+                html += '<img class="drop-zone-bin-img" src="' + src + '" alt="" draggable="false">';
+            }
             html += '</div>';
         });
         $('#drop-zones').html(html);
@@ -289,8 +303,7 @@
         var cat = item.correctCategory;
         var html = '';
         html += '<div class="item-card item-container ' + itemTypeClass(cat) + '" data-correct-category="' + cat + '">';
-        html += '<img class="item-image" src="' + escapeHtml(getItemImagePath(item.imageFile)) + '" alt="' + escapeHtml(item.name) + '" draggable="false">';
-        html += '<span class="item-card-name">' + escapeHtml(item.name) + '</span>';
+        html += '<img class="item-image" src="' + escapeHtml(getItemImagePath(item.imageFile)) + '" alt="" draggable="false">';
         html += '</div>';
 
         $('#current-item-slot').html(html);
@@ -457,22 +470,20 @@
     }
 
     function tickRoundTimer() {
+        if (gamePhase !== 'round') return;
         timeLeft--;
         updateHud();
-        if (timeLeft <= 0) {
-            if (currentItemIndex < roundItems.length) {
-                timeLeft = ROUND_DURATION_SEC;
-                $('#game-feedback').removeClass('ok').addClass('show bad').text('Finish all items to complete the round.');
-                updateHud();
-                return;
-            }
-            clearGameTimer();
-            if (currentRound >= ROUND_ORDER.length - 1) {
-                endGame('all-rounds-time-complete');
-                return;
-            }
-            startBreak();
+        if (timeLeft > 0) return;
+        clearGameTimer();
+        destroyDraggableIfAny();
+        destroyDroppables();
+        $('#current-item-slot').empty();
+        $('#game-feedback').removeClass('ok bad').addClass('show').text('Czas rundy.');
+        if (currentRound >= ROUND_ORDER.length - 1) {
+            endGame('all-rounds-time-complete');
+            return;
         }
+        startBreak();
     }
 
     function startGame() {
