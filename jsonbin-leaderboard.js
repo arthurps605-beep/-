@@ -6,8 +6,9 @@
     'use strict';
 
     const BIN_ID = '69c6df5daa77b81da92848b0';
+    /** Must be the Master Key from the same JSONBin account that owns this bin (Dashboard → API keys). */
     const API_KEY =
-        '$2a$10$g4x/TO9bj3mldTcGnHu44ubiEfRN7OOB5ZNgFkv.fBtjb8NZA/Nfm';
+        '$2a$10$FjN7lXfLrZdPm0.X/Qx5UeHGeWDAjPQAGj2JH6cF5IuFcGW3D0k7C';
 
     const GET_URL = 'https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest';
     const PUT_URL = 'https://api.jsonbin.io/v3/b/' + BIN_ID;
