@@ -13,7 +13,7 @@
     var ROUND_DURATION_SEC = 30;
     var BREAK_DURATION_SEC = 10;
     var POINTS_CORRECT = 1;
-    var POINTS_WRONG = -1;
+    var POINTS_WRONG = 0;
     var LEADERBOARD_KEY = 'inventoryGameLeaderboard';
     var LEADERBOARD_TOP = 10;
 
@@ -159,14 +159,10 @@
     }
 
     function updateHud() {
-        if (gamePhase === 'break') {
-            $('#timer-label').text('Break');
-            $('#game-timer').text(String(breakTimeLeft));
-        } else {
-            $('#timer-label').text('Round');
-            $('#game-timer').text(String(timeLeft));
-        }
-        $('#game-score').text(String(currentScore));
+        var shownTime = gamePhase === 'break' ? breakTimeLeft : timeLeft;
+        $('#game-timer').text(String(Math.max(0, shownTime)));
+        var isDanger = gamePhase === 'round' && shownTime <= 5;
+        $('#game-timer').toggleClass('game-timer-danger', isDanger);
     }
 
     function endGame(reason) {
@@ -207,13 +203,7 @@
     }
 
     function renderProgress() {
-        var total = roundItems.length;
-        var pos = Math.min(currentItemIndex + 1, total);
-        if (gamePhase === 'break') {
-            $('#game-progress').text('Break time · Next round in ' + breakTimeLeft + 's');
-            return;
-        }
-        $('#game-progress').text('Round ' + (currentRound + 1) + ' / 4 · Przedmiot ' + pos + ' / ' + total);
+        return;
     }
 
     function getItemImagePath(filename) {
@@ -351,10 +341,10 @@
 
             if (ok) {
                 currentScore += POINTS_CORRECT;
-                $('#game-feedback').removeClass('bad').addClass('show ok').text('Dobrze!');
+                $('#game-feedback').removeClass('bad').addClass('show ok').text('');
             } else {
                 currentScore += POINTS_WRONG;
-                $('#game-feedback').removeClass('ok').addClass('show bad').text('Spróbuj ponownie – to nie ta kategoria.');
+                $('#game-feedback').removeClass('ok').addClass('show bad').text('');
             }
             updateHud();
 
@@ -400,7 +390,7 @@
         breakTimeLeft = BREAK_DURATION_SEC;
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
-        $('#game-feedback').removeClass('ok bad').addClass('show').text('Next round starting...');
+        $('#game-feedback').removeClass('ok bad').removeClass('show').text('');
         clearGameTimer();
         updateHud();
         renderProgress();
@@ -448,7 +438,7 @@
         clearGameTimer();
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
-        $('#game-feedback').removeClass('ok bad').addClass('show').text('Czas rundy.');
+        $('#game-feedback').removeClass('ok bad').removeClass('show').text('');
         if (currentRound >= ROUND_ORDER.length - 1) {
             endGame('all-rounds-time-complete');
             return;
