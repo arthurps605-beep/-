@@ -13,31 +13,22 @@
  *
  * Рекомендовано: у JSONBin → API Keys → Access Keys створи ключ і дай йому для цього біна
  * дозволи Read + Update (щоб працювали і сторінка /leaderboard, і saveScore).
- * Встав ключ у ACCESS_KEY_CLIENT нижче. Якщо залишити порожнім — використовується MASTER_KEY.
+ * Ключ Access Key (Read + Update для цього біна) — у jsonbin-leaderboard.js.
  */
 (function (global) {
     'use strict';
 
     const BIN_ID = '69c6df5daa77b81da92848b0';
 
-    /** Master Key (тільки якщо ACCESS_KEY_CLIENT порожній). */
-    const MASTER_KEY =
-        '$2a$10$FjN7lXfLrZdPm0.X/Qx5UeHGeWDAjPQAGj2JH6cF5IuFcGW3D0k7C';
-
-    /**
-     * Access Key для браузера (Read + Update по біну). Порожній рядок = використати MASTER_KEY.
-     */
-    const ACCESS_KEY_CLIENT = '';
+    /** Access Key «гра» (браузер; Master Key у репо не зберігаємо). */
+    const ACCESS_KEY_CLIENT =
+        '$2a$10$g4x/TO9bj3mldTcGnHu44ubiEfRN7OOB5ZNgFkv.fBtjb8NZA/Nfm';
 
     const GET_URL = 'https://api.jsonbin.io/v3/b/' + BIN_ID + '/latest';
     const PUT_URL = 'https://api.jsonbin.io/v3/b/' + BIN_ID;
 
     function authHeaders() {
-        var ak = ACCESS_KEY_CLIENT && String(ACCESS_KEY_CLIENT).trim();
-        if (ak) {
-            return { 'X-Access-Key': ak };
-        }
-        return { 'X-Master-Key': MASTER_KEY };
+        return { 'X-Access-Key': String(ACCESS_KEY_CLIENT).trim() };
     }
 
     async function saveScore(name, score) {
