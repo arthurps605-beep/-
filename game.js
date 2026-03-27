@@ -29,6 +29,7 @@
     var ratio = 1;
     var currentRound = 0;
     var processingDrop = false;
+    var activeDragCleanup = null;
     var ROUND_ORDER = ['ABC', 'XYZ', 'FSN', 'VED'];
     var ITEM_IMAGE_BASE_PATH = 'Aassets/Subjekt/';
     var gamePhase = 'round'; // 'round' | 'break'
@@ -277,19 +278,107 @@
     }
 
     function destroyDraggableIfAny() {
-        var $el = $('#current-item-slot .item-draggable');
-        if ($el.length && $el.data('ui-draggable')) {
-            $el.draggable('destroy');
+        if (activeDragCleanup) {
+            activeDragCleanup();
+            activeDragCleanup = null;
         }
     }
 
     function destroyDroppables() {
-        $('#drop-zones .drop-zone').each(function () {
-            var $z = $(this);
-            if ($z.data('ui-droppable')) {
-                $z.droppable('destroy');
+        // No-op: mobile-first custom touch/mouse drop detection is used.
+    }
+
+    function getEventPoint(event) {
+        if (event.touches && event.touches.length) return event.touches[0];
+        if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0];
+        return event;
+    }
+
+    function bindMobileFirstDrag($img) {
+        var el = $img.get(0);
+        if (!el) return;
+        var dragging = false;
+
+        function getDropBinAt(clientX, clientY) {
+            var bins = document.querySelectorAll('#drop-zones .drop-zone');
+            for (var i = 0; i < bins.length; i++) {
+                var rect = bins[i].getBoundingClientRect();
+                if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
+                    return bins[i].getAttribute('data-bin');
+                }
             }
-        });
+            return null;
+        }
+
+        function stopDragVisual() {
+            el.style.position = '';
+            el.style.left = '';
+            el.style.top = '';
+            el.style.transform = '';
+            el.style.zIndex = '';
+            el.style.pointerEvents = '';
+        }
+
+        function onMove(event) {
+            if (!dragging || processingDrop) return;
+            var point = getEventPoint(event);
+            if (!point) return;
+            event.preventDefault();
+            el.style.position = 'fixed';
+            el.style.left = point.clientX + 'px';
+            el.style.top = point.clientY + 'px';
+            el.style.transform = 'translate(-50%, -50%)';
+            el.style.zIndex = '220';
+            el.style.pointerEvents = 'none';
+        }
+
+        function onEnd(event) {
+            if (!dragging || processingDrop) return;
+            dragging = false;
+            var point = getEventPoint(event);
+            var droppedBin = point ? getDropBinAt(point.clientX, point.clientY) : null;
+            var correctCat = el.getAttribute('data-correct-category');
+            if (!droppedBin) {
+                stopDragVisual();
+                return;
+            }
+            processingDrop = true;
+            if (droppedBin === correctCat) currentScore += POINTS_CORRECT;
+            else currentScore += POINTS_WRONG;
+            updateHud();
+            $img.remove();
+            window.setTimeout(function () {
+                processingDrop = false;
+                advanceAfterItem();
+            }, 120);
+        }
+
+        function onStart(event) {
+            if (processingDrop) return;
+            if (event.type === 'mousedown' && event.button !== 0) return;
+            dragging = true;
+            event.preventDefault();
+        }
+
+        el.addEventListener('touchstart', onStart, { passive: false });
+        el.addEventListener('touchmove', onMove, { passive: false });
+        el.addEventListener('touchend', onEnd, { passive: false });
+        el.addEventListener('touchcancel', onEnd, { passive: false });
+        el.addEventListener('mousedown', onStart);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+
+        activeDragCleanup = function () {
+            dragging = false;
+            stopDragVisual();
+            el.removeEventListener('touchstart', onStart);
+            el.removeEventListener('touchmove', onMove);
+            el.removeEventListener('touchend', onEnd);
+            el.removeEventListener('touchcancel', onEnd);
+            el.removeEventListener('mousedown', onStart);
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onEnd);
+        };
     }
 
     function renderCurrentItem() {
@@ -340,52 +429,7 @@
             });
             // #endregion
         });
-        $img.draggable({
-            helper: 'clone',
-            appendTo: 'body',
-            revert: 'invalid',
-            containment: '#screen-game',
-            scroll: false,
-            zIndex: 100,
-            start: function (event, ui) {
-                processingDrop = false;
-                if (ui && ui.helper) {
-                    ui.helper.css('z-index', 200);
-                }
-            },
-            stop: function () {
-                if (!processingDrop) {
-                    $(this).css({ top: 0, left: 0 });
-                }
-            }
-        });
-
-        $('#drop-zones .drop-zone').droppable({
-            accept: '.item-draggable',
-            tolerance: 'pointer',
-            drop: function (event, ui) {
-                if (processingDrop) return;
-                processingDrop = true;
-                var droppedBin = $(this).data('bin');
-                var correctCat = ui.draggable.data('correctCategory');
-                var ok = droppedBin === correctCat;
-
-                if (ok) {
-                    currentScore += POINTS_CORRECT;
-                } else {
-                    currentScore += POINTS_WRONG;
-                }
-                updateHud();
-
-                destroyDraggableIfAny();
-                ui.draggable.remove();
-
-                window.setTimeout(function () {
-                    processingDrop = false;
-                    advanceAfterItem();
-                }, 550);
-            }
-        });
+        bindMobileFirstDrag($img);
     }
 
     function startBreak() {

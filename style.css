@@ -275,7 +275,7 @@ html, body {
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 35%;
+    top: 32%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 100;
@@ -284,8 +284,8 @@ html, body {
 
 .item-image {
     width: auto;
-    max-width: 48vw;
-    max-height: 30vh;
+    max-width: 40vw;
+    max-height: 25vh;
     object-fit: contain;
     cursor: grab;
     touch-action: none;
@@ -330,7 +330,7 @@ html, body {
     position: absolute;
     left: 0.8rem;
     right: 0.8rem;
-    bottom: max(2vh, env(safe-area-inset-bottom));
+    bottom: max(1vh, env(safe-area-inset-bottom));
     width: 100%;
     display: flex;
     gap: 0.5rem;
@@ -344,20 +344,15 @@ html, body {
 
 .drop-zone {
     flex: 1;
-    min-height: 108px;
-    max-width: 33%;
-    width: 33%;
+    min-height: 24vh;
+    max-width: 40%;
+    width: 40%;
     object-fit: contain;
-    transform: scale(0.9);
+    transform: scale(1.08);
     transform-origin: center bottom;
     border-radius: 14px;
     box-shadow: 0 10px 20px rgba(17, 24, 39, 0.16);
     transition: transform 0.14s ease, filter 0.14s ease;
-}
-
-.drop-zone.ui-droppable-hover {
-    transform: translateY(-2px) scale(1.03);
-    filter: brightness(1.08);
 }
 
 .ui-draggable-dragging {
