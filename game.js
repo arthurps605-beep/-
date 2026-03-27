@@ -166,7 +166,6 @@
         } catch (e) {}
         $('#results-score').text('Punkty: ' + currentScore);
         destroyDraggableIfAny();
-        destroyDroppables();
         $('#current-item-slot').empty();
         showScreen('screen-results');
     }
@@ -182,7 +181,6 @@
         currentItemIndex++;
         if (currentItemIndex >= roundItems.length) {
             destroyDraggableIfAny();
-            destroyDroppables();
             $('#current-item-slot').empty();
             clearGameTimer();
             if (currentRound >= ROUND_ORDER.length - 1) {
@@ -204,10 +202,6 @@
             return;
         }
         $('#game-progress').text('Round ' + (currentRound + 1) + ' / 4 · Przedmiot ' + pos + ' / ' + total);
-    }
-
-    function itemTypeClass(cat) {
-        return 'type-' + cat;
     }
 
     function getItemImagePath(filename) {
@@ -285,13 +279,8 @@
         return bestArea > 0 ? bestBin : null;
     }
 
-    function destroyDroppables() {
-        $('#drop-zones .drop-zone').removeClass('drop-hover');
-    }
-
     function renderCurrentItem() {
         destroyDraggableIfAny();
-        destroyDroppables();
         $('#current-item-slot').empty();
         $('#game-feedback').removeClass('show ok bad').text('');
 
@@ -302,7 +291,7 @@
         var item = roundItems[currentItemIndex];
         var cat = item.correctCategory;
         var html = '';
-        html += '<div class="item-card item-container ' + itemTypeClass(cat) + '" data-correct-category="' + cat + '">';
+        html += '<div class="item-card item-container" data-correct-category="' + cat + '">';
         html += '<img class="item-image" src="' + escapeHtml(getItemImagePath(item.imageFile)) + '" alt="" draggable="false">';
         html += '</div>';
 
@@ -328,7 +317,6 @@
         var imgEl = $img[0];
         var dragX = 0;
         var dragY = 0;
-        var hoverRaf = null;
 
         imgEl.style.transform = '';
 
@@ -336,40 +324,11 @@
             interact(imgEl).unset();
         } catch (e) {}
 
-        function clearDropHover() {
-            $('#drop-zones .drop-zone').removeClass('drop-hover');
-        }
-
-        function updateDropHoverFromPoint() {
-            clearDropHover();
-            var ir = imgEl.getBoundingClientRect();
-            if (ir.width < 1 || ir.height < 1) return;
-            var cx = ir.left + ir.width / 2;
-            var cy = ir.top + ir.height / 2;
-            var prev = imgEl.style.pointerEvents;
-            imgEl.style.pointerEvents = 'none';
-            var hit = document.elementFromPoint(cx, cy);
-            imgEl.style.pointerEvents = prev;
-            if (hit) {
-                var $z = $(hit).closest('.drop-zone');
-                if ($z.length) $z.addClass('drop-hover');
-            }
-        }
-
-        function scheduleHoverUpdate() {
-            if (hoverRaf != null) return;
-            hoverRaf = window.requestAnimationFrame(function () {
-                hoverRaf = null;
-                updateDropHoverFromPoint();
-            });
-        }
-
         function resetDragVisual() {
             dragX = 0;
             dragY = 0;
             imgEl.style.transform = '';
             imgEl.style.zIndex = '';
-            imgEl.classList.remove('item-image-dragging');
         }
 
         function applyDrop(droppedBin) {
@@ -387,7 +346,6 @@
             }
             updateHud();
 
-            clearDropHover();
             resetDragVisual();
             destroyDraggableIfAny();
             $card.remove();
@@ -404,7 +362,6 @@
             listeners: {
                 start: function () {
                     if (processingDrop) return;
-                    imgEl.classList.add('item-image-dragging');
                     imgEl.style.zIndex = '10000';
                 },
                 move: function (event) {
@@ -412,16 +369,10 @@
                     dragY += event.dy;
                     event.target.style.transform =
                         'translate(' + dragX + 'px, ' + dragY + 'px)';
-                    scheduleHoverUpdate();
                 },
                 end: function () {
                     if (processingDrop) return;
-                    if (hoverRaf != null) {
-                        window.cancelAnimationFrame(hoverRaf);
-                        hoverRaf = null;
-                    }
                     var droppedBin = findDropBinForImage(imgEl);
-                    clearDropHover();
                     if (droppedBin != null) {
                         applyDrop(droppedBin);
                     } else {
@@ -436,7 +387,6 @@
         gamePhase = 'break';
         breakTimeLeft = BREAK_DURATION_SEC;
         destroyDraggableIfAny();
-        destroyDroppables();
         $('#current-item-slot').empty();
         $('#game-feedback').removeClass('ok bad').addClass('show').text('Next round starting...');
         clearGameTimer();
@@ -476,7 +426,6 @@
         if (timeLeft > 0) return;
         clearGameTimer();
         destroyDraggableIfAny();
-        destroyDroppables();
         $('#current-item-slot').empty();
         $('#game-feedback').removeClass('ok bad').addClass('show').text('Czas rundy.');
         if (currentRound >= ROUND_ORDER.length - 1) {
