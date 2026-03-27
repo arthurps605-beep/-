@@ -313,10 +313,11 @@ body.break-mode .game-stage {
     width: min(96vw, 620px);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(0.35rem, 1.8vw, 0.8rem);
+    gap: clamp(0.15rem, 0.9vw, 0.35rem);
     align-items: end;
     justify-items: center;
     margin-top: auto;
+    margin-bottom: clamp(0.35rem, 2vh, 0.95rem);
     padding-inline: max(0.2rem, env(safe-area-inset-left)) max(0.2rem, env(safe-area-inset-right));
     overflow: hidden;
     position: relative;
@@ -332,7 +333,7 @@ body.break-mode .game-stage {
 .drop-zone,
 .drop-zone.bin {
     width: 100%;
-    max-width: clamp(120px, 30vw, 185px);
+    max-width: clamp(130px, 33vw, 200px);
     min-width: 0;
     min-height: 0;
     height: auto;
@@ -357,7 +358,7 @@ body.break-mode .game-stage {
     display: block;
     width: 100%;
     max-width: 100%;
-    max-height: 24vh;
+    max-height: 26vh;
     height: auto;
     object-fit: contain;
     pointer-events: none;
@@ -407,6 +408,6 @@ body.break-mode .game-stage {
     .drop-zone-bin-img,
     .bin img,
     .drop-zone.bin img {
-        max-height: 22vh;
+        max-height: 23vh;
     }
 }
