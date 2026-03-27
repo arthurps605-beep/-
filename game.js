@@ -14,8 +14,6 @@
     var BREAK_DURATION_SEC = 10;
     var POINTS_CORRECT = 1;
     var POINTS_WRONG = 0;
-    var LEADERBOARD_KEY = 'inventoryGameLeaderboard';
-    var LEADERBOARD_TOP = 10;
 
     // --- Stan gry (current_round_item_list, current_item_index, current_score, timer) ---
     var currentNick = '';
@@ -163,6 +161,7 @@
         $('#game-timer').text(String(Math.max(0, shownTime)));
         var isDanger = gamePhase === 'round' && shownTime <= 5;
         $('#game-timer').toggleClass('game-timer-danger', isDanger);
+        $('#drop-zones .drop-zone').toggleClass('heartbeat', isDanger);
     }
 
     function endGame(reason) {
@@ -237,6 +236,12 @@
             html += '</div>';
         });
         $('#drop-zones').html(html);
+    }
+
+    function setDropTarget(binLetter) {
+        $('#drop-zones .drop-zone').removeClass('is-target');
+        if (!binLetter) return;
+        $('#drop-zones .drop-zone[data-bin="' + binLetter + '"]').addClass('is-target');
     }
 
     function destroyDraggableIfAny() {
@@ -331,6 +336,7 @@
             dragY = 0;
             imgEl.style.transform = '';
             imgEl.style.zIndex = '';
+            setDropTarget(null);
         }
 
         function applyDrop(droppedBin) {
@@ -371,10 +377,12 @@
                     dragY += event.dy;
                     event.target.style.transform =
                         'translate(' + dragX + 'px, ' + dragY + 'px)';
+                    setDropTarget(findDropBinForImage(imgEl));
                 },
                 end: function () {
                     if (processingDrop) return;
                     var droppedBin = findDropBinForImage(imgEl);
+                    setDropTarget(null);
                     if (droppedBin != null) {
                         applyDrop(droppedBin);
                     } else {
@@ -390,7 +398,9 @@
         breakTimeLeft = BREAK_DURATION_SEC;
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
+        setDropTarget(null);
         $('#game-feedback').removeClass('ok bad').removeClass('show').text('');
+        document.body.classList.add('break-mode');
         clearGameTimer();
         updateHud();
         renderProgress();
@@ -400,6 +410,7 @@
     function startRound() {
         gamePhase = 'round';
         timeLeft = ROUND_DURATION_SEC;
+        document.body.classList.remove('break-mode');
         loadCurrentRound();
         buildDropZones();
         renderCurrentItem();
@@ -496,49 +507,9 @@
 
     // --- Ekran wyników ---
     function initResultsScreen() {
-        $('#btn-leaderboard').off('click').on('click', function () {
-            saveToLeaderboard();
-            showLeaderboard();
-        });
         $('#btn-play-again').off('click').on('click', function () {
-            saveToLeaderboard();
             showScreen('screen-start');
         });
-    }
-
-    /**
-     * Leaderboard (ranking): przechowywanie w localStorage.
-     * Klucz: LEADERBOARD_KEY. Wartość: tablica obiektów { nickname, score }.
-     * Zapisujemy aktualny wynik, sortujemy po score malejąco, bierzemy top 10.
-     */
-    function saveToLeaderboard() {
-        var list = getLeaderboardList();
-        list.push({ nickname: currentNick, score: currentScore });
-        list.sort(function (a, b) { return b.score - a.score; });
-        list = list.slice(0, LEADERBOARD_TOP);
-        try {
-            localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(list));
-        } catch (e) {}
-    }
-
-    function getLeaderboardList() {
-        try {
-            var raw = localStorage.getItem(LEADERBOARD_KEY);
-            return raw ? JSON.parse(raw) : [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function showLeaderboard() {
-        var list = getLeaderboardList();
-        var html = '';
-        list.forEach(function (entry, i) {
-            html += '<li><span class="rank">' + (i + 1) + '.</span><span class="name">' + escapeHtml(entry.nickname) + '</span><span class="score">' + entry.score + '</span></li>';
-        });
-        if (!html) html = '<li>Brak wyników</li>';
-        $('#leaderboard-list').html(html);
-        showScreen('screen-leaderboard');
     }
 
     function escapeHtml(s) {
@@ -547,18 +518,11 @@
         return div.innerHTML;
     }
 
-    function initLeaderboardScreen() {
-        $('#btn-back-start').off('click').on('click', function () {
-            showScreen('screen-start');
-        });
-    }
-
     // --- Inicjalizacja przy starcie strony ---
     $(function () {
         applyReturnFromGame(); // jeśli wróciliśmy z game-original (from=game)
         initStartScreen();
         initGameScreen();
         initResultsScreen();
-        initLeaderboardScreen();
     });
 })();
