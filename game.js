@@ -91,7 +91,7 @@
                 { name: 'Лампа', correctCategory: 'S', imageFile: 'fsn_s_lamp.png' },
                 { name: 'Стілець', correctCategory: 'S', imageFile: 'fsn_s_chair.png' },
                 { name: 'Блендер', correctCategory: 'S', imageFile: 'fsn_s_blender.png' },
-                { name: 'Дискета', correctCategory: 'N', imageFile: 'fsn_n_floppy.png' },
+                { name: 'Дискета', correctCategory: 'N', imageFile: 'fsn_n.png' },
                 { name: 'VHS-касета', correctCategory: 'N', imageFile: 'fsn_n_vhs.png' },
                 { name: 'DVD-диск', correctCategory: 'N', imageFile: 'fsn_n_dvd.png' },
                 { name: 'Стаціонарний телефон', correctCategory: 'N', imageFile: 'fsn_n_landline.png' },
@@ -112,7 +112,7 @@
                 { name: 'Медичні рукавички', correctCategory: 'E', imageFile: 'ved_e_gloves.png' },
                 { name: 'Термометр', correctCategory: 'E', imageFile: 'ved_e_thermometer.png' },
                 { name: 'Вітаміни', correctCategory: 'D', imageFile: 'ved_d_vitamins.png' },
-                { name: 'Косметика', correctCategory: 'D', imageFile: 'ved_d_cosmetics.png' },
+                { name: 'Косметика', correctCategory: 'D', imageFile: 'ved_d.png' },
                 { name: 'Протеїн', correctCategory: 'D', imageFile: 'ved_d_protein.png' },
                 { name: 'Крем для обличчя', correctCategory: 'D', imageFile: 'ved_d_facecream.png' },
                 { name: 'Аромаолії', correctCategory: 'D', imageFile: 'ved_d_oils.png' }
