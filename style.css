@@ -305,7 +305,8 @@ body {
 }
 
 .item-card.item-container {
-    width: min(92vw, 100%);
+    width: min(78vw, 320px);
+    height: min(28vh, 220px);
     margin: 0;
     padding: 0;
     min-height: 0;
@@ -330,9 +331,9 @@ body {
     -webkit-tap-highlight-color: transparent;
     position: relative;
     width: auto;
-    max-height: 25vh;
+    max-width: 100%;
+    max-height: 100%;
     height: auto;
-    max-width: 85vw;
     object-fit: contain;
     border: none;
     outline: none;
@@ -388,7 +389,7 @@ body {
 .drop-zones-row {
     width: 100%;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.3rem;
     align-items: flex-end;
     justify-content: center;
     margin-top: auto;
@@ -428,8 +429,8 @@ body {
 .bin img,
 .drop-zone.bin img {
     display: block;
-    width: 28vw;
-    max-width: 120px;
+    width: 42vw;
+    max-width: 180px;
     height: auto;
     object-fit: contain;
     pointer-events: none;
@@ -443,6 +444,18 @@ body {
 
 @media (max-width: 600px) {
     .item-image {
-        max-height: 22vh;
+        max-height: 100%;
+    }
+
+    .item-card.item-container {
+        width: min(82vw, 320px);
+        height: min(30vh, 220px);
+    }
+
+    .drop-zone-bin-img,
+    .bin img,
+    .drop-zone.bin img {
+        width: 40vw;
+        max-width: 170px;
     }
 }

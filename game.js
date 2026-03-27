@@ -139,6 +139,18 @@
         return a;
     }
 
+    function uniqueRoundItems(items) {
+        var usedFiles = Object.create(null);
+        var unique = [];
+        items.forEach(function (item) {
+            var key = String(item.imageFile || '');
+            if (!key || usedFiles[key]) return;
+            usedFiles[key] = true;
+            unique.push(item);
+        });
+        return unique;
+    }
+
     function clearGameTimer() {
         if (timerInterval) {
             clearInterval(timerInterval);
@@ -172,7 +184,7 @@
 
     function loadCurrentRound() {
         currentSystem = ROUND_ORDER[currentRound];
-        roundItems = shuffleArray(SYSTEMS[currentSystem].items);
+        roundItems = shuffleArray(uniqueRoundItems(SYSTEMS[currentSystem].items));
         currentItemIndex = 0;
     }
 
@@ -421,6 +433,15 @@
 
     function tickRoundTimer() {
         if (gamePhase !== 'round') return;
+        if (currentItemIndex >= roundItems.length) {
+            clearGameTimer();
+            if (currentRound >= ROUND_ORDER.length - 1) {
+                endGame('all-items-complete');
+            } else {
+                startBreak();
+            }
+            return;
+        }
         timeLeft--;
         updateHud();
         if (timeLeft > 0) return;
