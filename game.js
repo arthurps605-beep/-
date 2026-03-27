@@ -175,6 +175,9 @@
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         showScreen('screen-results');
+        if (typeof saveScore === 'function') {
+            saveScore(currentNick, currentScore);
+        }
     }
 
     function loadCurrentRound() {

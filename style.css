@@ -119,6 +119,13 @@ body {
     width: 100%;
 }
 
+.results-buttons a.btn {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
 #screen-game.screen-game-mobile {
     display: none;
     position: relative;
