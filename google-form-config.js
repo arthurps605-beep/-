@@ -9,9 +9,9 @@
 (function (w) {
     'use strict';
     w.GOOGLE_FORM_CONFIG = {
-        formId: '',
-        entryNickname: '',
-        entryScore: '',
+        formId: '1FAIpQLSfwQFuqlTYPwA2RU73Kv0l1ImjlepJIroXy_9X4gWGAzlg8Mw',
+        entryNickname: 'entry.195353444',
+        entryScore: 'entry.1830577080',
         /**
          * Ten sam arkusz we wszystkich wariantach linku (?gid=, &range=…).
          * Kolumny w arkuszu: Nickname (B1), Score (C1) — wypełnia Google Forms po powiązaniu Odpowiedzi z tym plikiem.
