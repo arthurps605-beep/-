@@ -1,5 +1,7 @@
 /**
- * Dane z formularza: formId z …/d/e/FORM_ID/viewform; entry.* z prefill lub źródła strony.
+ * Formularz: formId, entry.* — jak wcześniej.
+ * Ranking (leaderboard.html): w Arkuszach → Udostępnij → Publikuj w internecie →
+ * wybierz zakładkę z odpowiedziami → CSV; wklej link tutaj.
  */
 (function (w) {
     'use strict';
@@ -7,7 +9,8 @@
         formId: '1FAIpQLSfwQFuqlTYPwA2RU73Kv0l1ImjlepJIroXy_9X4gWGAzlg8Mw',
         entryNickname: 'entry.195353444',
         entryScore: 'entry.1830577080',
-        sheetViewUrl:
-            'https://docs.google.com/spreadsheets/d/1ioNEyqRXZa_pwD9OOnF-FoqL0wxncsbXCJkbMKFz5tE/edit?usp=sharing'
+
+        /** Obowiązkowe dla strony /leaderboard — opublikowany CSV (nie link „edytuj”). */
+        sheetPublishedCsvUrl: ''
     };
 })(typeof window !== 'undefined' ? window : this);

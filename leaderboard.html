@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0a0c14">
     <title>Ranking</title>
-    <link rel="stylesheet" href="leaderboard-page.css?v=5">
+    <link rel="stylesheet" href="leaderboard-page.css?v=6">
 </head>
 <body>
     <div class="container">
@@ -14,34 +14,18 @@
                 <h1 class="lb-title">Ranking</h1>
             </header>
 
-            <div class="table lb-info" role="region" aria-label="Informacja o rankingu">
-                <p class="lb-info-text">
-                    Wyniki z gry wysyłane są do Google Forms i trafiają do arkusza — możesz je przeglądać pod
-                    jednym linkiem.
-                </p>
-                <p class="lb-sheet-actions">
-                    <a
-                        id="lb-sheet-link"
-                        class="lb-sheet-btn"
-                        href="https://docs.google.com/spreadsheets/d/1ioNEyqRXZa_pwD9OOnF-FoqL0wxncsbXCJkbMKFz5tE/edit?usp=sharing"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >Otwórz arkusz wyników</a>
-                </p>
-                <p class="lb-info-text lb-info-muted">
-                    Wymagane uprawnienia do arkusza ustaw w Udostępnianiu w Google Sheets.
-                </p>
+            <div class="table lb-table-wrap" role="region" aria-label="Ranking">
+                <p id="lb-status" class="lb-status"></p>
+                <div class="lb-table-head" id="lb-table-head" hidden>
+                    <span class="lb-col-rank">#</span>
+                    <span class="lb-col-player">Gracz</span>
+                    <span class="lb-col-score">Pkt</span>
+                </div>
+                <ul id="lb-rows" class="lb-rows" hidden></ul>
             </div>
         </div>
     </div>
-    <script src="google-form-config.js?v=6"></script>
-    <script>
-(function () {
-    var cfg = typeof GOOGLE_FORM_CONFIG !== 'undefined' ? GOOGLE_FORM_CONFIG : null;
-    var url = cfg && cfg.sheetViewUrl ? String(cfg.sheetViewUrl).trim() : '';
-    var a = document.getElementById('lb-sheet-link');
-    if (a && url) a.setAttribute('href', url);
-})();
-    </script>
+    <script src="google-form-config.js?v=7"></script>
+    <script src="leaderboard.js?v=1"></script>
 </body>
 </html>
