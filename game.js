@@ -223,10 +223,23 @@
         }
     }
 
+    /**
+     * Один базовий шлях: src уже заданий у HTML — не перезаписуємо (без зайвого запиту/мигання).
+     * Кілька шляхів: ланцюжок fallback як раніше.
+     */
     function bindImageUrlChain($img, baseFolders, filename, logName) {
         var urls = [];
         for (var b = 0; b < baseFolders.length; b++) {
             urls.push(baseFolders[b] + filename);
+        }
+        if (urls.length === 1) {
+            $img.off('error.itemImg').on('error.itemImg', function () {
+                $img.off('error.itemImg');
+                if (typeof console !== 'undefined' && console.error) {
+                    console.error('Missing image:', logName);
+                }
+            });
+            return;
         }
         var idx = 0;
         function onErr() {
@@ -236,11 +249,39 @@
                 $img.attr('src', urls[idx]);
             } else {
                 $img.off('error.itemImg');
-                console.error('Missing image:', logName);
+                if (typeof console !== 'undefined' && console.error) {
+                    console.error('Missing image:', logName);
+                }
             }
         }
         $img.off('error.itemImg').on('error.itemImg', onErr);
         $img.attr('src', urls[0]);
+    }
+
+    /** Підвантажити кеш браузера для всіх картинок системи (предмети + баки). */
+    function warmImagesForSystem(systemKey) {
+        var sys = SYSTEMS[systemKey];
+        if (!sys) return;
+        var pool = sys.items;
+        if (Array.isArray(pool)) {
+            for (var i = 0; i < pool.length; i++) {
+                var f = String(pool[i].imageFile || '').trim();
+                if (!f) continue;
+                var im = new Image();
+                im.decoding = 'async';
+                im.src = ITEM_IMAGE_BASES[0] + f;
+            }
+        }
+        var bins = sys.bins;
+        if (Array.isArray(bins)) {
+            for (var j = 0; j < bins.length; j++) {
+                var bf = binImageFilenameFor(systemKey, bins[j]);
+                if (!bf) continue;
+                var im2 = new Image();
+                im2.decoding = 'async';
+                im2.src = BIN_IMAGE_BASES[0] + bf;
+            }
+        }
     }
 
     function binImageFilenameFor(system, letter) {
@@ -269,7 +310,7 @@
                     escapeHtml(binFile) +
                     '" src="' +
                     src +
-                    '" alt="" draggable="false">';
+                    '" alt="" draggable="false" decoding="async">';
             }
             html += '</div>';
         });
@@ -364,7 +405,7 @@
             (layout.imgClass ? ' ' + layout.imgClass : '') +
             '" src="' +
             escapeHtml(ITEM_IMAGE_BASES[0] + item.imageFile) +
-            '" alt="" draggable="false">';
+            '" alt="" draggable="false" decoding="async" fetchpriority="high">';
         if (layout.wrapCrop) {
             html += '</span>';
         }
@@ -470,6 +511,10 @@
         document.body.classList.add('break-mode');
         clearGameTimer();
         updateHud();
+        var nextIdx = currentRound + 1;
+        if (nextIdx < ROUND_ORDER.length) {
+            warmImagesForSystem(ROUND_ORDER[nextIdx]);
+        }
         timerInterval = window.setInterval(tickBreakTimer, 1000);
     }
 
@@ -478,6 +523,7 @@
         timeLeft = ROUND_DURATION_SEC;
         document.body.classList.remove('break-mode');
         loadCurrentRound();
+        warmImagesForSystem(currentSystem);
         buildDropZones();
         renderCurrentItem();
         $('#game-feedback').removeClass('show ok bad').text('');
@@ -569,5 +615,12 @@
         initStartScreen();
         initGameScreen();
         initResultsScreen();
+        warmImagesForSystem(ROUND_ORDER[0]);
+        window.setTimeout(function () {
+            var r;
+            for (r = 1; r < ROUND_ORDER.length; r++) {
+                warmImagesForSystem(ROUND_ORDER[r]);
+            }
+        }, 500);
     });
 })();
