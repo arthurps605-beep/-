@@ -11,6 +11,9 @@
     w.GOOGLE_FORM_CONFIG = {
         formId: '',
         entryNickname: '',
-        entryScore: ''
+        entryScore: '',
+        /** Podgląd zbiorczych odpowiedzi (Responses → arkusz lub bezpośredni link). */
+        sheetViewUrl:
+            'https://docs.google.com/spreadsheets/d/1ioNEyqRXZa_pwD9OOnF-FoqL0wxncsbXCJkbMKFz5tE/edit?usp=sharing'
     };
 })(typeof window !== 'undefined' ? window : this);

@@ -611,10 +611,23 @@
         return div.innerHTML;
     }
 
+    function applyResultsSheetLink() {
+        var cfg = typeof GOOGLE_FORM_CONFIG !== 'undefined' ? GOOGLE_FORM_CONFIG : null;
+        var u = cfg && cfg.sheetViewUrl ? String(cfg.sheetViewUrl).trim() : '';
+        var $a = $('#results-sheet-link');
+        if (!$a.length) return;
+        if (u) {
+            $a.attr('href', u).show();
+        } else {
+            $a.hide();
+        }
+    }
+
     $(function () {
         initStartScreen();
         initGameScreen();
         initResultsScreen();
+        applyResultsSheetLink();
         warmImagesForSystem(ROUND_ORDER[0]);
         window.setTimeout(function () {
             var r;
