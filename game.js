@@ -591,12 +591,12 @@
                     .text('Błąd: brak modułu wysyłki (google-form-submit.js).');
                 return;
             }
-            var r = submitScoreToGoogleForm(nick, scoreInt);
+                var r = submitScoreToGoogleForm(nick, scoreInt);
             if (!r || !r.ok) {
                 $('#submit-score-msg')
                     .show()
                     .text(
-                        'Nie skonfigurowano formularza. Uzupełnij google-form-config.js (formId i entry.*).'
+                        'Nie skonfigurowano wysyłki. Uzupełnij google-form-config.js (sheetWebAppUrl albo formId i entry.*).'
                     );
                 return;
             }

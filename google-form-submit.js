@@ -1,5 +1,5 @@
 /**
- * Wysyłka wyniku do Google Forms → odpowiedzi w jednym arkuszu (Responses).
+ * Wysyłka: opcjonalnie Apps Script (aktualizacja po nicku) albo Google Form (nowy wiersz).
  */
 (function (global) {
     'use strict';
@@ -15,26 +15,48 @@
             }
             return { ok: false, reason: 'config-missing' };
         }
+
+        var webApp = String(cfg.sheetWebAppUrl || '').trim();
+        if (webApp) {
+            var fd = new FormData();
+            fd.append('nickname', String(name));
+            fd.append('score', String(score));
+            var tok = String(cfg.sheetWebAppToken || '').trim();
+            if (tok) {
+                fd.append('token', tok);
+            }
+            fetch(webApp, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: fd
+            }).catch(function (err) {
+                if (typeof console !== 'undefined' && console.warn) {
+                    console.warn('Sheet web app fetch:', err);
+                }
+            });
+            return { ok: true };
+        }
+
         var formId = String(cfg.formId || '').trim();
         var nickEntry = String(cfg.entryNickname || '').trim();
         var scoreEntry = String(cfg.entryScore || '').trim();
         if (!formId || !nickEntry || !scoreEntry) {
             if (typeof console !== 'undefined' && console.error) {
                 console.error(
-                    'Google Form: uzupełnij formId, entryNickname, entryScore w google-form-config.js'
+                    'Google Form: uzupełnij sheetWebAppUrl albo formId, entryNickname, entryScore w google-form-config.js'
                 );
             }
             return { ok: false, reason: 'config-incomplete' };
         }
         var url =
             'https://docs.google.com/forms/d/e/' + formId + '/formResponse';
-        var fd = new FormData();
-        fd.append(nickEntry, String(name));
-        fd.append(scoreEntry, String(score));
+        var fdForm = new FormData();
+        fdForm.append(nickEntry, String(name));
+        fdForm.append(scoreEntry, String(score));
         fetch(url, {
             method: 'POST',
             mode: 'no-cors',
-            body: fd
+            body: fdForm
         }).catch(function (err) {
             if (typeof console !== 'undefined' && console.warn) {
                 console.warn('Google Form fetch:', err);
