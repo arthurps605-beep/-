@@ -1,42 +1,27 @@
-/**
- * Gra klasyfikacji zapasów
- * Mechanika rozgrywki jak w oryginalnej grze: jeden przedmiot w kontenerze,
- * przeciąganie (interact.js), wykrywanie nakładania na kategorie (overlap),
- * punktacja, timer, pojawianie się kolejnego przedmiotu po upuszczeniu.
- * Kategorie: ABC (wartość), XYZ (stabilność), FSN (ruch), VED (krytyczność).
- */
-
 (function () {
     'use strict';
 
-    // --- Stałe (jak w oryginale: czas rundy, punkty za poprawną/błędną odpowiedź) ---
     var ROUND_DURATION_SEC = 30;
     var BREAK_DURATION_SEC = 10;
     var POINTS_CORRECT = 1;
     var POINTS_WRONG = 0;
 
-    // --- Stan gry (current_round_item_list, current_item_index, current_score, timer) ---
     var currentNick = '';
-    var currentSystem = null;   // 'ABC' | 'XYZ' | 'FSN' | 'VED'
+    var currentSystem = null;
     var currentScore = 0;
     var timeLeft = ROUND_DURATION_SEC;
     var breakTimeLeft = BREAK_DURATION_SEC;
     var timerInterval = null;
     var currentItemIndex = 0;
-    var roundItems = [];        // lista przedmiotów na rundę
-    var ratio = 1;
+    var roundItems = [];
     var currentRound = 0;
     var processingDrop = false;
     var ROUND_ORDER = ['ABC', 'XYZ', 'FSN', 'VED'];
-    var ITEM_IMAGE_BASE_PATH = 'Aassets/Subjekt/';
-    var gamePhase = 'round'; // 'round' | 'break'
+    var ITEM_IMAGE_BASES = ['assets/subjekt/'];
+    var BIN_IMAGE_BASES = ['assets/subjekt/bins/'];
+    var gamePhase = 'round';
+    var advanceAfterDropTimerId = null;
 
-    /**
-     * ROUND 1 — ABC (VALUE): A wysoka, B średnia, C niska wartość.
-     * ROUND 2 — XYZ (STABILITY): X stabilne, Y zmienne, Z nieprzewidywalne.
-     * ROUND 3 — FSN (MOVEMENT): F szybki, S wolny, N bez ruchu.
-     * ROUND 4 — VED (CRITICALITY): V kluczowe, E niezbędne, D pożądane.
-     */
     var SYSTEMS = {
         ABC: {
             bins: ['A', 'B', 'C'],
@@ -49,7 +34,7 @@
                 { name: 'Планшет', correctCategory: 'B', imageFile: 'abc_b_tablet.png' },
                 { name: 'Геймпад', correctCategory: 'B', imageFile: 'abc_b_controller.png' },
                 { name: 'Принтер', correctCategory: 'B', imageFile: 'abc_b_printer.png' },
-                { name: 'Навушники', correctCategory: 'B', imageFile: 'abc_b_headphones.png' },
+                { name: 'Навушники', correctCategory: 'B', imageFile: 'abc_b_headphones.webp' },
                 { name: 'Смарт-годинник', correctCategory: 'B', imageFile: 'abc_b_smartwatch.png' },
                 { name: 'USB-кабель', correctCategory: 'C', imageFile: 'abc_c_usbcable.png' },
                 { name: 'Мишка', correctCategory: 'C', imageFile: 'abc_c_mouse.png' },
@@ -120,7 +105,6 @@
         }
     };
 
-    // --- Nawigacja między ekranami ---
     function showScreen(screenId) {
         $('.screen').removeClass('active');
         $('#' + screenId).addClass('active');
@@ -137,16 +121,35 @@
         return a;
     }
 
-    function uniqueRoundItems(items) {
-        var usedFiles = Object.create(null);
-        var unique = [];
-        items.forEach(function (item) {
-            var key = String(item.imageFile || '');
-            if (!key || usedFiles[key]) return;
-            usedFiles[key] = true;
-            unique.push(item);
-        });
-        return unique;
+    /**
+     * Рівно один раз кожен рядок SYSTEMS[system].items (за індексом у масиві).
+     * Без дедупу за файлом — інакше різні предмети з однаковою картинкою зникали б.
+     */
+    function buildRoundDeck(systemKey) {
+        var pool = SYSTEMS[systemKey] && SYSTEMS[systemKey].items;
+        if (!Array.isArray(pool)) return [];
+        var deck = [];
+        for (var i = 0; i < pool.length; i++) {
+            var raw = pool[i];
+            var f = String(raw.imageFile || '').trim();
+            if (!f) {
+                console.error('Missing image:', raw.name || '(item)');
+                continue;
+            }
+            deck.push({
+                slotIndex: i,
+                name: raw.name,
+                correctCategory: raw.correctCategory,
+                imageFile: f
+            });
+        }
+        return shuffleArray(deck);
+    }
+
+    function getCurrentItem() {
+        if (!roundItems.length) return null;
+        if (currentItemIndex < 0 || currentItemIndex >= roundItems.length) return null;
+        return roundItems[currentItemIndex];
     }
 
     function clearGameTimer() {
@@ -164,25 +167,35 @@
         $('#drop-zones .drop-zone').toggleClass('heartbeat', isDanger);
     }
 
-    function endGame(reason) {
+    function endGame() {
+        cancelAdvanceAfterDropTimer();
+        processingDrop = false;
         clearGameTimer();
         try {
             sessionStorage.setItem('gameScore', String(currentScore));
             sessionStorage.setItem('gameNick', currentNick);
-            if (currentSystem) sessionStorage.setItem('gameRoundSystem', currentSystem);
         } catch (e) {}
         $('#results-score').text('Punkty: ' + currentScore);
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         showScreen('screen-results');
         if (typeof saveScore === 'function') {
-            saveScore(currentNick, currentScore);
+            var nickTrim = String(currentNick || '').trim();
+            var scoreInt = Math.max(0, Math.floor(Number(currentScore)) || 0);
+            var p = saveScore(nickTrim, scoreInt);
+            if (p && typeof p.then === 'function') {
+                p.then(function (r) {
+                    if (r && r.ok === false) {
+                        console.warn('Ranking: nie zapisano wyniku.', r.reason || '');
+                    }
+                });
+            }
         }
     }
 
     function loadCurrentRound() {
         currentSystem = ROUND_ORDER[currentRound];
-        roundItems = shuffleArray(uniqueRoundItems(SYSTEMS[currentSystem].items));
+        roundItems = buildRoundDeck(currentSystem);
         currentItemIndex = 0;
     }
 
@@ -194,25 +207,42 @@
             $('#current-item-slot').empty();
             clearGameTimer();
             if (currentRound >= ROUND_ORDER.length - 1) {
-                endGame('all-items-complete');
+                endGame();
                 return;
             }
             startBreak();
             return;
         }
-        renderProgress();
         renderCurrentItem();
     }
 
-    function renderProgress() {
-        return;
+    function cancelAdvanceAfterDropTimer() {
+        if (advanceAfterDropTimerId != null) {
+            window.clearTimeout(advanceAfterDropTimerId);
+            advanceAfterDropTimerId = null;
+        }
     }
 
-    function getItemImagePath(filename) {
-        return ITEM_IMAGE_BASE_PATH + filename;
+    function bindImageUrlChain($img, baseFolders, filename, logName) {
+        var urls = [];
+        for (var b = 0; b < baseFolders.length; b++) {
+            urls.push(baseFolders[b] + filename);
+        }
+        var idx = 0;
+        function onErr() {
+            idx++;
+            if (idx < urls.length) {
+                $img.off('error.itemImg').on('error.itemImg', onErr);
+                $img.attr('src', urls[idx]);
+            } else {
+                $img.off('error.itemImg');
+                console.error('Missing image:', logName);
+            }
+        }
+        $img.off('error.itemImg').on('error.itemImg', onErr);
+        $img.attr('src', urls[0]);
     }
 
-    /** Bin header images: Aassets/Subjekt/[file].png per system + letter */
     function binImageFilenameFor(system, letter) {
         var map = {
             ABC: { A: 'abc_a.png', B: 'abc_b.png', C: 'abc_c.png' },
@@ -228,17 +258,27 @@
         var html = '';
         bins.forEach(function (letter) {
             var binFile = binImageFilenameFor(currentSystem, letter);
-            var src = binFile ? escapeHtml(getItemImagePath(binFile)) : '';
+            var src = binFile ? escapeHtml(BIN_IMAGE_BASES[0] + binFile) : '';
             html += '<div class="drop-zone bin"';
             html += ' data-bin="' + letter + '"';
             html += ' data-category="' + letter + '"';
             html += ' role="button" aria-label="Category ' + letter + '">';
             if (src) {
-                html += '<img class="drop-zone-bin-img" src="' + src + '" alt="" draggable="false">';
+                html +=
+                    '<img class="drop-zone-bin-img" data-bin-img="' +
+                    escapeHtml(binFile) +
+                    '" src="' +
+                    src +
+                    '" alt="" draggable="false">';
             }
             html += '</div>';
         });
         $('#drop-zones').html(html);
+        $('#drop-zones .drop-zone-bin-img').each(function () {
+            var name = this.getAttribute('data-bin-img');
+            if (!name) return;
+            bindImageUrlChain($(this), BIN_IMAGE_BASES, name, name);
+        });
     }
 
     function setDropTarget(binLetter) {
@@ -262,7 +302,6 @@
         return x * y;
     }
 
-    /** Drop: center of image under bins (elementFromPoint), fallback to rect overlap — more reliable on mobile. */
     function findDropBinForImage(imgEl) {
         var ir = imgEl.getBoundingClientRect();
         if (ir.width < 1 || ir.height < 1) return null;
@@ -290,34 +329,36 @@
     }
 
     function renderCurrentItem() {
+        cancelAdvanceAfterDropTimer();
+        processingDrop = false;
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         $('#game-feedback').removeClass('show ok bad').text('');
 
-        if (!roundItems.length || currentItemIndex >= roundItems.length) {
-            return;
-        }
+        var item = getCurrentItem();
+        if (!item) return;
 
-        var item = roundItems[currentItemIndex];
         var cat = item.correctCategory;
         var html = '';
         html += '<div class="item-card item-container" data-correct-category="' + cat + '">';
-        html += '<img class="item-image" src="' + escapeHtml(getItemImagePath(item.imageFile)) + '" alt="" draggable="false">';
+        html +=
+            '<img class="item-image" src="' +
+            escapeHtml(ITEM_IMAGE_BASES[0] + item.imageFile) +
+            '" alt="" draggable="false">';
+        html +=
+            '<p class="item-name-label">' +
+            escapeHtml(String(item.name || '')) +
+            '</p>';
         html += '</div>';
 
         $('#current-item-slot').html(html);
 
         var $card = $('#current-item-slot .item-card');
         var $img = $card.find('.item-image');
-        $img.on('error', function () {
-            console.error('Failed to load image:', item.imageFile);
-        });
+        bindImageUrlChain($img, ITEM_IMAGE_BASES, item.imageFile, item.imageFile);
         setupInteractImageDrag($card, $img);
     }
 
-    /**
-     * Drag: ONLY interact.js — local translate state; unset before bind to avoid double listeners.
-     */
     function setupInteractImageDrag($card, $img) {
         if (typeof interact === 'undefined') {
             console.error('interact.js is required for drag');
@@ -358,10 +399,12 @@
             updateHud();
 
             resetDragVisual();
-            destroyDraggableIfAny();
             $card.remove();
+            destroyDraggableIfAny();
 
-            window.setTimeout(function () {
+            cancelAdvanceAfterDropTimer();
+            advanceAfterDropTimerId = window.setTimeout(function () {
+                advanceAfterDropTimerId = null;
                 processingDrop = false;
                 advanceAfterItem();
             }, 550);
@@ -399,6 +442,8 @@
     function startBreak() {
         gamePhase = 'break';
         breakTimeLeft = BREAK_DURATION_SEC;
+        cancelAdvanceAfterDropTimer();
+        processingDrop = false;
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         setDropTarget(null);
@@ -406,7 +451,6 @@
         document.body.classList.add('break-mode');
         clearGameTimer();
         updateHud();
-        renderProgress();
         timerInterval = window.setInterval(tickBreakTimer, 1000);
     }
 
@@ -420,14 +464,12 @@
         $('#game-feedback').removeClass('show ok bad').text('');
         clearGameTimer();
         updateHud();
-        renderProgress();
         timerInterval = window.setInterval(tickRoundTimer, 1000);
     }
 
     function tickBreakTimer() {
         breakTimeLeft--;
         updateHud();
-        renderProgress();
         if (breakTimeLeft <= 0) {
             clearGameTimer();
             currentRound++;
@@ -440,7 +482,7 @@
         if (currentItemIndex >= roundItems.length) {
             clearGameTimer();
             if (currentRound >= ROUND_ORDER.length - 1) {
-                endGame('all-items-complete');
+                endGame();
             } else {
                 startBreak();
             }
@@ -450,11 +492,13 @@
         updateHud();
         if (timeLeft > 0) return;
         clearGameTimer();
+        cancelAdvanceAfterDropTimer();
+        processingDrop = false;
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         $('#game-feedback').removeClass('ok bad').removeClass('show').text('');
         if (currentRound >= ROUND_ORDER.length - 1) {
-            endGame('all-rounds-time-complete');
+            endGame();
             return;
         }
         startBreak();
@@ -472,7 +516,6 @@
         startRound();
     }
 
-    // --- Ekran startowy ---
     function initStartScreen() {
         $('#btn-start').off('click').on('click', function () {
             var nick = $('#nick-input').val().trim();
@@ -487,28 +530,10 @@
 
     function initGameScreen() {
         $('#btn-quit-game').off('click').on('click', function () {
-            endGame('manual-quit');
+            endGame();
         });
     }
 
-    /** Po powrocie z gry: pokaż wyniki i ustaw currentScore/currentNick */
-    function applyReturnFromGame() {
-        var params = new URLSearchParams(window.location.search);
-        if (params.get('from') !== 'game') return;
-        var score = params.get('score');
-        if (score !== null && score !== '') currentScore = parseInt(score, 10) || 0;
-        else {
-            try { var s = sessionStorage.getItem('gameScore'); if (s != null) currentScore = parseInt(s, 10) || 0; } catch (e) {}
-        }
-        try {
-            var nick = sessionStorage.getItem('gameNick');
-            if (nick) currentNick = nick;
-        } catch (e) {}
-        $('#results-score').text('Punkty: ' + currentScore);
-        showScreen('screen-results');
-    }
-
-    // --- Ekran wyników ---
     function initResultsScreen() {
         $('#btn-play-again').off('click').on('click', function () {
             showScreen('screen-start');
@@ -521,9 +546,7 @@
         return div.innerHTML;
     }
 
-    // --- Inicjalizacja przy starcie strony ---
     $(function () {
-        applyReturnFromGame(); // jeśli wróciliśmy z game-original (from=game)
         initStartScreen();
         initGameScreen();
         initResultsScreen();

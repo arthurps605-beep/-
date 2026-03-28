@@ -1,0 +1,243 @@
+/**
+ * Shared shell: menu + leaderboard (same background + overlay + card).
+ * Gameplay screen (#screen-game) is unchanged.
+ */
+:root {
+    --ui-bg: #0f1419;
+    --ui-text: #e8eef5;
+    --ui-text-muted: rgba(232, 238, 245, 0.72);
+    --ui-accent: #6b7cff;
+    --ui-accent-soft: rgba(107, 124, 255, 0.22);
+    --ui-card-bg: rgba(0, 0, 0, 0.48);
+    --ui-radius-lg: 22px;
+    --ui-radius-md: 16px;
+    --ui-shadow-soft: 0 10px 32px rgba(0, 0, 0, 0.28);
+    --ui-shadow-btn: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ui-screen {
+    position: relative;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+        max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    overflow: auto;
+    color: var(--ui-text);
+}
+
+.ui-screen.active {
+    display: flex;
+}
+
+.ui-card .results-score {
+    font-size: clamp(1.35rem, 5vw, 1.65rem);
+    font-weight: 900;
+    margin: 0.35rem 0 1rem;
+    text-align: center;
+    color: var(--ui-text);
+}
+
+.ui-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 12, 18, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.ui-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 22rem;
+}
+
+.ui-card {
+    width: 100%;
+    background: var(--ui-card-bg);
+    border-radius: var(--ui-radius-lg);
+    padding: 1.35rem 1.25rem 1.5rem;
+    box-shadow: var(--ui-shadow-soft);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ui-title {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.45rem, 5.5vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-align: center;
+    color: var(--ui-text);
+}
+
+.ui-label {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--ui-text-muted);
+    text-align: center;
+    margin-bottom: 0.35rem;
+}
+
+.ui-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--ui-radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.96);
+    font-size: 1.05rem;
+    color: #1a1a2e;
+    box-shadow: var(--ui-shadow-btn);
+}
+
+.ui-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--ui-radius-md);
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: var(--ui-shadow-btn);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ui-btn:active {
+    transform: scale(0.98);
+}
+
+.ui-btn-primary {
+    background: linear-gradient(180deg, #5c6dff 0%, #4b56e0 100%);
+    color: #fff;
+}
+
+.ui-btn-primary:hover {
+    filter: brightness(1.05);
+}
+
+.ui-muted {
+    font-size: 0.9rem;
+    color: var(--ui-text-muted);
+    text-align: center;
+}
+
+/* Leaderboard */
+.lb-card {
+    width: 100%;
+    max-width: 22rem;
+}
+
+.lb-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lb-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--ui-radius-md);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    font-weight: 600;
+    color: var(--ui-text);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lb-row.lb-top1 {
+    background: rgba(255, 200, 100, 0.12);
+    border-color: rgba(255, 200, 120, 0.25);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.lb-row.lb-empty {
+    justify-content: center;
+    text-align: center;
+    color: var(--ui-text-muted);
+}
+
+.lb-name {
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.lb-score {
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    opacity: 0.95;
+}
+
+.lb-back {
+    display: inline-block;
+    margin-top: 0.25rem;
+    color: rgba(180, 200, 255, 0.95);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.lb-back:hover {
+    text-decoration: underline;
+}
+
+#list.is-refreshing {
+    opacity: 0.92;
+}
+
+/* Standalone leaderboard page (same shell as menu) */
+.lb-page {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    color: var(--ui-text);
+    background: #0f1419 url('../background.png') no-repeat center center;
+    background-size: cover;
+}
+
+.lb-shell {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+        max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+}
+
+.lb-shell .ui-overlay {
+    position: fixed;
+    inset: 0;
+}
+
+.lb-shell .ui-container {
+    max-width: 22rem;
+}

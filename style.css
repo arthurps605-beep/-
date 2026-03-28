@@ -24,7 +24,7 @@ body {
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #1a1a2e;
-    background: #1a1a2e url('Aassets/Subjekt/background.png') no-repeat center center;
+    background: #1a1a2e url('assets/background.png') no-repeat center center;
     background-size: cover;
 }
 
@@ -47,32 +47,11 @@ body {
     display: flex;
 }
 
-#screen-start,
-#screen-results {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    background: transparent;
+.screen.ui-screen {
+    text-align: center;
 }
 
-#screen-start .title {
-    font-size: clamp(1.7rem, 7vw, 2.2rem);
-    margin: 0 0 0.4rem;
-    font-weight: 900;
-}
-
-#screen-start label {
-    font-size: 1rem;
-}
-
-#nick-input {
-    width: 90%;
-    padding: 0.95rem 1rem;
-    border: 3px solid #5e6eff;
-    border-radius: 18px;
-    background: #fff;
-    font-size: 1.05rem;
+#nick-input.ui-input {
     -webkit-user-select: text;
     user-select: text;
 }
@@ -112,7 +91,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.65rem;
-    width: 90%;
+    width: 100%;
 }
 
 .results-buttons .btn {
@@ -260,19 +239,35 @@ body.break-mode .game-stage {
     background: transparent;
 }
 
+.item-name-label {
+    margin: 0.35rem 0 0;
+    padding: 0 0.25rem;
+    font-size: clamp(0.78rem, 3.2vw, 0.95rem);
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    line-height: 1.25;
+    max-width: min(90vw, 320px);
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 .item-card.item-container {
     width: min(62vw, 256px);
-    height: min(22vh, 176px);
+    height: auto;
+    min-height: min(18vh, 140px);
+    max-height: min(34vh, 260px);
     margin: 0;
     padding: 0;
-    min-height: 0;
     border: none;
     border-radius: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0;
+    gap: 0.2rem;
     background: transparent;
     box-shadow: none;
     outline: none;
@@ -409,7 +404,9 @@ body.break-mode .game-stage {
 
     .item-card.item-container {
         width: min(64vw, 256px);
-        height: min(21vh, 176px);
+        min-height: min(17vh, 132px);
+        max-height: min(36vh, 248px);
+        height: auto;
     }
 
     .drop-zone-bin-img,

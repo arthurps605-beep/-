@@ -6,15 +6,21 @@
     <meta name="theme-color" content="#5c6bc0">
     <title>Gra klasyfikacji zapasów</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/css/ui-shell.css">
 </head>
 <body>
     <div id="app">
         <!-- Ekran startowy -->
-        <section id="screen-start" class="screen active">
-            <h1 class="title">Gra klasyfikacji zapasów</h1>
-            <label for="nick-input">Wpisz swój nick</label>
-            <input type="text" id="nick-input" placeholder="Nick" maxlength="30" autocomplete="off">
-            <button type="button" id="btn-start" class="btn btn-primary">Rozpocznij</button>
+        <section id="screen-start" class="screen active ui-screen">
+            <div class="ui-overlay" aria-hidden="true"></div>
+            <div class="ui-container">
+                <div class="ui-card">
+                    <h1 class="ui-title">Gra klasyfikacji zapasów</h1>
+                    <label class="ui-label" for="nick-input">Wpisz swój nick</label>
+                    <input type="text" id="nick-input" class="ui-input" placeholder="Nick" maxlength="30" autocomplete="off">
+                    <button type="button" id="btn-start" class="ui-btn ui-btn-primary">Rozpocznij</button>
+                </div>
+            </div>
         </section>
 
         <!-- Rozgrywka (jeden przedmiot, 3 strefy w rzędzie) -->
@@ -42,19 +48,23 @@
         </section>
 
         <!-- Wyniki po rundzie -->
-        <section id="screen-results" class="screen">
-            <h2>Wynik</h2>
-            <p id="results-score" class="results-score">Punkty: 0</p>
-            <div class="results-buttons">
-                <a href="leaderboard/" class="btn btn-secondary">Ranking globalny</a>
-                <button type="button" id="btn-play-again" class="btn btn-primary">Zagraj ponownie</button>
+        <section id="screen-results" class="screen ui-screen">
+            <div class="ui-overlay" aria-hidden="true"></div>
+            <div class="ui-container">
+                <div class="ui-card">
+                    <h2 class="ui-title">Wynik</h2>
+                    <p id="results-score" class="results-score">Punkty: 0</p>
+                    <div class="results-buttons">
+                        <button type="button" id="btn-play-again" class="ui-btn ui-btn-primary">Zagraj ponownie</button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-    <script src="jsonbin-leaderboard.js?v=7"></script>
-    <script src="game.js"></script>
+    <script src="jsonbin-leaderboard.js?v=9"></script>
+    <script src="game.js?v=14"></script>
 </body>
 </html>

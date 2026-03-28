@@ -1,0 +1,35 @@
+# macOS / Windows
+.DS_Store
+**/.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Secrets & local env
+.env
+.env.*
+!.env.example
+
+# Node (якщо з’явиться)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# IDE / редактор
+.idea/
+*.swp
+*.swo
+*~
+
+# Тимчасові / службові
+*.log
+.git-push-status.txt
+
+# Копія старого проєкту — гра її не використовує
+game-original/
+
+# Важкі бібліотеки: у index.html лише CDN (jQuery, interact.js)
+assets/lib/
+
+# Не підключені до поточної гри (залишки recycling-шаблону)
+assets/js/
+assets/font/
