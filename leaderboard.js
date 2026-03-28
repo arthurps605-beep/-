@@ -130,7 +130,16 @@
         }
     }
 
+    function responseLooksLikeHtml(text) {
+        var s = String(text || '').trim().slice(0, 80);
+        if (!s) return false;
+        return /^<!doctype|^<html/i.test(s) || s.charAt(0) === '<';
+    }
+
     function buildRanking(text) {
+        if (responseLooksLikeHtml(text)) {
+            throw new Error('html');
+        }
         var lines = text.split(/\r?\n/).filter(function (ln) {
             return ln.length > 0;
         });
@@ -208,8 +217,13 @@
                     var rows = buildRanking(text);
                     render(rows);
                 } catch (err) {
-                    status.textContent =
-                        'Nie rozpoznano kolumn (potrzebne: Nickname i Score w CSV).';
+                    if (err && err.message === 'html') {
+                        status.textContent =
+                            'Google zwrócił stronę zamiast CSV — w arkuszu: Plik → Udostępnij → Publikuj w internecie i wybierz zakładkę z odpowiedziami formularza (nie pusty arkusz), potem odśwież link w google-form-config.js (gid w URL jak #gid=… przy edycji).';
+                    } else {
+                        status.textContent =
+                            'Nie rozpoznano kolumn (potrzebne: Nickname i Score w CSV).';
+                    }
                     ul.hidden = true;
                     var hx = document.getElementById('lb-table-head');
                     if (hx) hx.hidden = true;

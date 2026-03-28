@@ -1,7 +1,9 @@
 /**
  * Formularz: formId, entry.* — jak wcześniej.
- * Ranking (leaderboard.html): w Arkuszach → Udostępnij → Publikuj w internecie →
- * wybierz zakładkę z odpowiedziami → CSV; wklej link tutaj.
+ *
+ * Ranking: gid musi wskazywać arkusz z odpowiedziami formularza (w edycji: #gid=… w URL).
+ * Jeśli CSV jest pusty lub błąd — w Arkuszach: Udostępnij → Publikuj w internecie →
+ * wybierz zakładkę „Відповіді форми” / Responses (albo cały plik), potem CSV.
  */
 (function (w) {
     'use strict';
@@ -10,8 +12,8 @@
         entryNickname: 'entry.195353444',
         entryScore: 'entry.1830577080',
 
-        /** Opublikowany CSV (ten sam dokument co pubhtml, ale output=csv). */
+        /** CSV opublikowanego arkusza z odpowiedziami (nie pierwszy pusty arkusz). */
         sheetPublishedCsvUrl:
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1Mms6EONOtmaRIx69Xjqw4Zk1Wn8bsY6t0iAq5YixJiWRwbTqk3UrRTSzaGgkVyYKdPYmViG_OF03/pub?gid=0&single=true&output=csv'
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1Mms6EONOtmaRIx69Xjqw4Zk1Wn8bsY6t0iAq5YixJiWRwbTqk3UrRTSzaGgkVyYKdPYmViG_OF03/pub?gid=326377582&single=true&output=csv'
     };
 })(typeof window !== 'undefined' ? window : this);
