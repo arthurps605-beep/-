@@ -36,4 +36,3 @@ python3 -m http.server 8000
 ## Licencja
 
 MIT (zgodnie z oryginalnym repozytorium).
-# -
