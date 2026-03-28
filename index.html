@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#5c6bc0">
     <title>Gra klasyfikacji zapasów</title>
     <link rel="stylesheet" href="style.css?v=6">
-    <link rel="stylesheet" href="assets/css/ui-shell.css?v=3">
+    <link rel="stylesheet" href="assets/css/ui-shell.css?v=4">
     <link rel="preconnect" href="https://code.jquery.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 </head>
@@ -22,6 +22,13 @@
                     <input type="text" id="nick-input" class="ui-input" placeholder="Nick" maxlength="30" autocomplete="off">
                     <p id="nick-start-msg" class="ui-muted nick-start-msg" style="display: none" role="alert"></p>
                     <button type="button" id="btn-start" class="ui-btn ui-btn-primary">Rozpocznij</button>
+                    <div id="test-submit-panel" class="test-submit-panel" style="display: none" hidden>
+                        <p class="test-submit-hint">Tryb testowy — parametr URL <code>?test=1</code></p>
+                        <button type="button" id="btn-test-submit" class="ui-btn ui-btn-secondary">
+                            Wyślij testowy wynik (77 pkt)
+                        </button>
+                        <p id="test-submit-msg" class="ui-muted test-submit-msg" style="display: none"></p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -70,6 +77,6 @@
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="google-form-config.js?v=8"></script>
     <script src="google-form-submit.js?v=3"></script>
-    <script src="game.js?v=25"></script>
+    <script src="game.js?v=26"></script>
 </body>
 </html>

@@ -612,7 +612,48 @@
         startRound();
     }
 
+    function hasTestModeQuery() {
+        try {
+            return /[?&]test=1(?:&|$)/.test(String(window.location.search || ''));
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function initTestSubmitPanel() {
+        if (!hasTestModeQuery()) return;
+        var $panel = $('#test-submit-panel');
+        if (!$panel.length) return;
+        $panel.removeAttr('hidden').css('display', 'block');
+        $('#btn-test-submit')
+            .off('click.test')
+            .on('click.test', function () {
+                var $msg = $('#test-submit-msg');
+                if (typeof submitScoreToGoogleForm !== 'function') {
+                    $msg.show().text('Brak google-form-submit.js.');
+                    return;
+                }
+                var testNick = 'Test' + String(Date.now() % 1000000);
+                var testScore = 77;
+                var r = submitScoreToGoogleForm(testNick, testScore);
+                if (!r || !r.ok) {
+                    $msg.show().text('Sprawdź google-form-config.js (formId, entry.*).');
+                    return;
+                }
+                $msg
+                    .show()
+                    .text(
+                        'Wysłano: ' +
+                            testNick +
+                            ' — ' +
+                            testScore +
+                            ' pkt. Otwórz /leaderboard (odśwież za chwilę).'
+                    );
+            });
+    }
+
     function initStartScreen() {
+        initTestSubmitPanel();
         $('#nick-input').off('input.nickClear').on('input.nickClear', function () {
             $('#nick-start-msg').hide().text('');
         });
