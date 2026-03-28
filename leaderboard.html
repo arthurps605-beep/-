@@ -1,32 +1,21 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="pl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0a0c14">
-    <title>Leaderboard — Inventory Game</title>
-    <link rel="stylesheet" href="leaderboard-page.css?v=1">
+    <title>Ranking</title>
+    <link rel="stylesheet" href="leaderboard-page.css?v=3">
 </head>
 <body>
-    <!--
-      Data: localStorage key inventoryGameLeaderboard (same origin as the game).
-      Open this file from the same browser / device where students played, or host both on the same domain.
-    -->
     <div class="container">
         <div class="lb-panel">
             <header class="lb-header">
-                <h1 class="lb-title">Hall of fame</h1>
-                <p class="lb-sub">Top 30 players · same browser as the game</p>
+                <h1 class="lb-title">Ranking</h1>
             </header>
 
-            <div class="table" role="region" aria-label="Leaderboard">
-                <div class="lb-table-head">
-                    <span class="lb-col-rank">#</span>
-                    <span class="lb-col-player">Player</span>
-                    <span class="lb-col-score">Score</span>
-                </div>
+            <div class="table" role="region" aria-label="Ranking">
                 <ul id="lb-rows" class="lb-rows" aria-live="polite"></ul>
-                <div id="lb-empty" class="lb-empty" hidden>No scores yet. Play the game on this browser first.</div>
             </div>
         </div>
     </div>
@@ -104,14 +93,7 @@
     function render() {
         var list = loadSorted();
         var ul = document.getElementById('lb-rows');
-        var empty = document.getElementById('lb-empty');
         ul.innerHTML = '';
-
-        if (!list.length) {
-            empty.hidden = false;
-            return;
-        }
-        empty.hidden = true;
 
         for (var i = 0; i < list.length; i++) {
             var rank = i + 1;
@@ -128,13 +110,8 @@
             nameEl.textContent = p.nickname;
             nameEl.title = p.nickname;
 
-            var scoreEl = document.createElement('span');
-            scoreEl.className = 'lb-col-score';
-            scoreEl.textContent = String(p.score);
-
             li.appendChild(rankEl);
             li.appendChild(nameEl);
-            li.appendChild(scoreEl);
             ul.appendChild(li);
         }
     }

@@ -5,11 +5,9 @@
     --lb-glass: rgba(0, 0, 0, 0.6);
     --lb-border: rgba(255, 255, 255, 0.08);
     --lb-text: #e8ecf4;
-    --lb-muted: rgba(232, 236, 244, 0.55);
     --lb-gold: #ffd700;
     --lb-silver: #c0c0c0;
     --lb-bronze: #cd7f32;
-    --lb-accent: #5c6dff;
 }
 
 * {
@@ -48,7 +46,7 @@ body {
 
 .lb-header {
     text-align: center;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
 }
 
 .lb-title {
@@ -57,15 +55,8 @@ body {
     font-size: clamp(1.35rem, 4.5vw, 1.85rem);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    margin: 0 0 0.35rem;
-    text-shadow: 0 0 40px rgba(92, 109, 255, 0.35);
-}
-
-.lb-sub {
     margin: 0;
-    font-size: 0.88rem;
-    color: var(--lb-muted);
-    line-height: 1.45;
+    text-shadow: 0 0 40px rgba(92, 109, 255, 0.35);
 }
 
 .table {
@@ -80,21 +71,8 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.lb-table-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px 14px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--lb-muted);
-    border-bottom: 1px solid var(--lb-border);
-}
-
 .lb-col-rank {
-    width: 3rem;
+    width: 3.25rem;
     flex-shrink: 0;
     text-align: center;
 }
@@ -102,13 +80,8 @@ body {
 .lb-col-player {
     flex: 1;
     min-width: 0;
-    padding: 0 0.75rem;
-}
-
-.lb-col-score {
-    width: 4.5rem;
-    flex-shrink: 0;
-    text-align: right;
+    padding-left: 0.5rem;
+    text-align: left;
 }
 
 .lb-rows {
@@ -147,21 +120,10 @@ body {
     white-space: nowrap;
 }
 
-.row .lb-col-score {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--lb-accent);
-}
-
 .top1 {
     color: var(--lb-gold);
     background: linear-gradient(90deg, rgba(255, 215, 0, 0.12), rgba(255, 255, 255, 0.02));
     border-color: rgba(255, 215, 0, 0.2);
-}
-
-.top1 .lb-col-score {
-    color: var(--lb-gold);
 }
 
 .top2 {
@@ -170,25 +132,10 @@ body {
     border-color: rgba(192, 192, 192, 0.15);
 }
 
-.top2 .lb-col-score {
-    color: var(--lb-silver);
-}
-
 .top3 {
     color: var(--lb-bronze);
     background: linear-gradient(90deg, rgba(205, 127, 50, 0.12), rgba(255, 255, 255, 0.02));
     border-color: rgba(205, 127, 50, 0.2);
-}
-
-.top3 .lb-col-score {
-    color: var(--lb-bronze);
-}
-
-.lb-empty {
-    text-align: center;
-    padding: 2rem 1rem;
-    color: var(--lb-muted);
-    font-size: 0.95rem;
 }
 
 @media (max-width: 380px) {
