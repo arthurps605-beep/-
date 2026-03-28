@@ -23,6 +23,43 @@
     var gamePhase = 'round';
     var advanceAfterDropTimerId = null;
 
+    /** Zapamiętane nicki po udanej wysyłce (to urządzenie; bez tego nie da się odczytać arkusza z przeglądarki). */
+    var LS_USED_NICKS_KEY = 'gra_inventory_game_used_nicks_v1';
+
+    function nickKey(nick) {
+        return String(nick || '')
+            .trim()
+            .toLowerCase();
+    }
+
+    function isNickAlreadyUsed(nick) {
+        var k = nickKey(nick);
+        if (!k) return false;
+        try {
+            var raw = localStorage.getItem(LS_USED_NICKS_KEY);
+            if (!raw) return false;
+            var arr = JSON.parse(raw);
+            if (!Array.isArray(arr)) return false;
+            return arr.indexOf(k) !== -1;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    function markNickAsUsed(nick) {
+        var k = nickKey(nick);
+        if (!k) return;
+        try {
+            var raw = localStorage.getItem(LS_USED_NICKS_KEY);
+            var arr = raw ? JSON.parse(raw) : [];
+            if (!Array.isArray(arr)) arr = [];
+            if (arr.indexOf(k) === -1) {
+                arr.push(k);
+            }
+            localStorage.setItem(LS_USED_NICKS_KEY, JSON.stringify(arr));
+        } catch (err) {}
+    }
+
     var SYSTEMS = {
         ABC: {
             bins: ['A', 'B', 'C'],
@@ -180,12 +217,34 @@
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         showScreen('screen-results');
-        resetResultsSubmitUi();
+        autoSubmitScoreToTable();
     }
 
-    function resetResultsSubmitUi() {
-        $('#btn-submit-score').prop('disabled', false).removeClass('is-done');
-        $('#submit-score-msg').hide().text('');
+    function autoSubmitScoreToTable() {
+        var nick = String(currentNick || '').trim();
+        var scoreInt = Math.max(0, Math.floor(Number(currentScore)) || 0);
+        var $msg = $('#submit-score-msg');
+        $msg.show().text('Wysyłanie wyniku…');
+
+        if (!nick) {
+            $msg.text('Brak nicku — wpisz nick przed grą.');
+            return;
+        }
+        if (isNickAlreadyUsed(nick)) {
+            $msg.text('Ten nick już zapisał wynik — przy następnej grze wpisz inny.');
+            return;
+        }
+        if (typeof submitScoreToGoogleForm !== 'function') {
+            $msg.text('Błąd: brak modułu wysyłki (google-form-submit.js).');
+            return;
+        }
+        var r = submitScoreToGoogleForm(nick, scoreInt);
+        if (!r || !r.ok) {
+            $msg.text('Nie skonfigurowano wysyłki. Uzupełnij google-form-config.js (formId i entry.*).');
+            return;
+        }
+        markNickAsUsed(nick);
+        $msg.text('Wynik wysłany do tabeli.');
     }
 
     function loadCurrentRound() {
@@ -554,12 +613,23 @@
     }
 
     function initStartScreen() {
+        $('#nick-input').off('input.nickClear').on('input.nickClear', function () {
+            $('#nick-start-msg').hide().text('');
+        });
         $('#btn-start').off('click').on('click', function () {
             var nick = $('#nick-input').val().trim();
             if (!nick) {
                 $('#nick-input').focus();
                 return;
             }
+            if (isNickAlreadyUsed(nick)) {
+                $('#nick-start-msg')
+                    .show()
+                    .text('Ten nick już był użyty — wpisz inny.');
+                $('#nick-input').focus();
+                return;
+            }
+            $('#nick-start-msg').hide().text('');
             currentNick = nick;
             startGame();
         });
@@ -574,34 +644,6 @@
     function initResultsScreen() {
         $('#btn-play-again').off('click').on('click', function () {
             showScreen('screen-start');
-        });
-
-        $('#btn-submit-score').off('click').on('click', function () {
-            var nick = String(currentNick || '').trim();
-            if (!nick) {
-                $('#submit-score-msg')
-                    .show()
-                    .text('Brak nicku — wpisz nick przed grą.');
-                return;
-            }
-            var scoreInt = Math.max(0, Math.floor(Number(currentScore)) || 0);
-            if (typeof submitScoreToGoogleForm !== 'function') {
-                $('#submit-score-msg')
-                    .show()
-                    .text('Błąd: brak modułu wysyłki (google-form-submit.js).');
-                return;
-            }
-                var r = submitScoreToGoogleForm(nick, scoreInt);
-            if (!r || !r.ok) {
-                $('#submit-score-msg')
-                    .show()
-                    .text(
-                        'Nie skonfigurowano wysyłki. Uzupełnij google-form-config.js (sheetWebAppUrl albo formId i entry.*).'
-                    );
-                return;
-            }
-            $('#submit-score-msg').show().text('Score submitted!');
-            $('#btn-submit-score').prop('disabled', true).addClass('is-done');
         });
     }
 
