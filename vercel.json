@@ -1,13 +1,5 @@
 {
   "rewrites": [
-    { "source": "/leaderboard", "destination": "/leaderboard/index.html" }
-  ],
-  "headers": [
-    {
-      "source": "/jsonbin-leaderboard.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0, must-revalidate" }
-      ]
-    }
+    { "source": "/leaderboard", "destination": "/leaderboard.html" }
   ]
 }

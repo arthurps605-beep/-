@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0a0c14">
+    <title>Leaderboard — Inventory Game</title>
+    <link rel="stylesheet" href="leaderboard-page.css?v=1">
+</head>
+<body>
+    <!--
+      Data: localStorage key inventoryGameLeaderboard (same origin as the game).
+      Open this file from the same browser / device where students played, or host both on the same domain.
+    -->
+    <div class="container">
+        <div class="lb-panel">
+            <header class="lb-header">
+                <h1 class="lb-title">Hall of fame</h1>
+                <p class="lb-sub">Top 30 players · same browser as the game</p>
+            </header>
+
+            <div class="table" role="region" aria-label="Leaderboard">
+                <div class="lb-table-head">
+                    <span class="lb-col-rank">#</span>
+                    <span class="lb-col-player">Player</span>
+                    <span class="lb-col-score">Score</span>
+                </div>
+                <ul id="lb-rows" class="lb-rows" aria-live="polite"></ul>
+                <div id="lb-empty" class="lb-empty" hidden>No scores yet. Play the game on this browser first.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+(function () {
+    'use strict';
+
+    var KEY = 'inventoryGameLeaderboard';
+
+    function normalizeKey(name) {
+        return String(name || '').trim().toLowerCase();
+    }
+
+    function parseRows(rawArr) {
+        var out = [];
+        if (!Array.isArray(rawArr)) return out;
+        for (var i = 0; i < rawArr.length; i++) {
+            var row = rawArr[i];
+            if (!row || typeof row !== 'object') continue;
+            var nick = String(row.nickname != null ? row.nickname : row.name != null ? row.name : '').trim();
+            if (!nick) continue;
+            out.push({
+                nickname: nick,
+                score: Math.max(0, Math.floor(Number(row.score)) || 0),
+                date: row.date
+            });
+        }
+        return out;
+    }
+
+    function mergeTop30(rows) {
+        var map = Object.create(null);
+        for (var i = 0; i < rows.length; i++) {
+            var r = rows[i];
+            var k = normalizeKey(r.nickname);
+            if (!k) continue;
+            var ex = map[k];
+            if (!ex || r.score > ex.score) {
+                map[k] = { nickname: r.nickname, score: r.score, date: r.date };
+            }
+        }
+        return Object.keys(map)
+            .map(function (k) { return map[k]; })
+            .sort(function (a, b) { return b.score - a.score; })
+            .slice(0, 30);
+    }
+
+    function loadSorted() {
+        try {
+            var raw = localStorage.getItem(KEY);
+            if (!raw) return [];
+            var arr = JSON.parse(raw);
+            return mergeTop30(parseRows(arr));
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function rowClass(rank) {
+        if (rank === 1) return 'row top1';
+        if (rank === 2) return 'row top2';
+        if (rank === 3) return 'row top3';
+        return 'row';
+    }
+
+    function rankCellText(rank) {
+        var medals = ['🥇', '🥈', '🥉'];
+        if (rank >= 1 && rank <= 3) {
+            return medals[rank - 1] + ' ' + rank;
+        }
+        return String(rank);
+    }
+
+    function render() {
+        var list = loadSorted();
+        var ul = document.getElementById('lb-rows');
+        var empty = document.getElementById('lb-empty');
+        ul.innerHTML = '';
+
+        if (!list.length) {
+            empty.hidden = false;
+            return;
+        }
+        empty.hidden = true;
+
+        for (var i = 0; i < list.length; i++) {
+            var rank = i + 1;
+            var p = list[i];
+            var li = document.createElement('li');
+            li.className = rowClass(rank);
+
+            var rankEl = document.createElement('span');
+            rankEl.className = 'lb-col-rank';
+            rankEl.textContent = rankCellText(rank);
+
+            var nameEl = document.createElement('span');
+            nameEl.className = 'lb-col-player';
+            nameEl.textContent = p.nickname;
+            nameEl.title = p.nickname;
+
+            var scoreEl = document.createElement('span');
+            scoreEl.className = 'lb-col-score';
+            scoreEl.textContent = String(p.score);
+
+            li.appendChild(rankEl);
+            li.appendChild(nameEl);
+            li.appendChild(scoreEl);
+            ul.appendChild(li);
+        }
+    }
+
+    render();
+    window.addEventListener('storage', function (e) {
+        if (e.key === KEY || e.key === null) render();
+    });
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) render();
+    });
+})();
+    </script>
+</body>
+</html>

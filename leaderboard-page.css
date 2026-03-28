@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,800;1,9..40,600&family=Orbitron:wght@600;700;800&display=swap');
+
+:root {
+    --lb-bg: #0a0c14;
+    --lb-glass: rgba(0, 0, 0, 0.6);
+    --lb-border: rgba(255, 255, 255, 0.08);
+    --lb-text: #e8ecf4;
+    --lb-muted: rgba(232, 236, 244, 0.55);
+    --lb-gold: #ffd700;
+    --lb-silver: #c0c0c0;
+    --lb-bronze: #cd7f32;
+    --lb-accent: #5c6dff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--lb-bg);
+    color: var(--lb-text);
+}
+
+body {
+    background-image:
+        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(92, 109, 255, 0.25), transparent 55%),
+        radial-gradient(ellipse 80% 50% at 100% 50%, rgba(120, 80, 200, 0.12), transparent 45%),
+        radial-gradient(ellipse 60% 40% at 0% 80%, rgba(40, 180, 160, 0.08), transparent 50%);
+    background-attachment: fixed;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1.25rem;
+}
+
+.lb-panel {
+    width: 100%;
+    max-width: 520px;
+}
+
+.lb-header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.lb-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.35rem, 4.5vw, 1.85rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 0.35rem;
+    text-shadow: 0 0 40px rgba(92, 109, 255, 0.35);
+}
+
+.lb-sub {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--lb-muted);
+    line-height: 1.45;
+}
+
+.table {
+    background: var(--lb-glass);
+    border-radius: 20px;
+    padding: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--lb-border);
+    box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.lb-table-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px 14px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lb-muted);
+    border-bottom: 1px solid var(--lb-border);
+}
+
+.lb-col-rank {
+    width: 3rem;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.lb-col-player {
+    flex: 1;
+    min-width: 0;
+    padding: 0 0.75rem;
+}
+
+.lb-col-score {
+    width: 4.5rem;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.lb-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 12px;
+    margin-top: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.row .lb-col-rank {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.row .lb-col-player {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.row .lb-col-score {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--lb-accent);
+}
+
+.top1 {
+    color: var(--lb-gold);
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.12), rgba(255, 255, 255, 0.02));
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+.top1 .lb-col-score {
+    color: var(--lb-gold);
+}
+
+.top2 {
+    color: var(--lb-silver);
+    background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), rgba(255, 255, 255, 0.02));
+    border-color: rgba(192, 192, 192, 0.15);
+}
+
+.top2 .lb-col-score {
+    color: var(--lb-silver);
+}
+
+.top3 {
+    color: var(--lb-bronze);
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.12), rgba(255, 255, 255, 0.02));
+    border-color: rgba(205, 127, 50, 0.2);
+}
+
+.top3 .lb-col-score {
+    color: var(--lb-bronze);
+}
+
+.lb-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--lb-muted);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 380px) {
+    .table {
+        padding: 14px;
+    }
+
+    .row {
+        padding: 8px 10px;
+    }
+}

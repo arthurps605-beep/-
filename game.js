@@ -179,17 +179,10 @@
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         showScreen('screen-results');
-        if (typeof saveScore === 'function') {
-            var nickTrim = String(currentNick || '').trim();
-            var scoreInt = Math.max(0, Math.floor(Number(currentScore)) || 0);
-            var p = saveScore(nickTrim, scoreInt);
-            if (p && typeof p.then === 'function') {
-                p.then(function (r) {
-                    if (r && r.ok === false) {
-                        console.warn('Ranking: nie zapisano wyniku.', r.reason || '');
-                    }
-                });
-            }
+        var nickTrim = String(currentNick || '').trim();
+        var scoreInt = Math.max(0, Math.floor(Number(currentScore)) || 0);
+        if (nickTrim && typeof persistInventoryLeaderboardScore === 'function') {
+            persistInventoryLeaderboardScore(nickTrim, scoreInt);
         }
     }
 
