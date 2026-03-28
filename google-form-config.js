@@ -12,7 +12,10 @@
         formId: '',
         entryNickname: '',
         entryScore: '',
-        /** Podgląd zbiorczych odpowiedzi (Responses → arkusz lub bezpośredni link). */
+        /**
+         * Ten sam arkusz we wszystkich wariantach linku (?gid=, &range=…).
+         * Kolumny w arkuszu: Nickname (B1), Score (C1) — wypełnia Google Forms po powiązaniu Odpowiedzi z tym plikiem.
+         */
         sheetViewUrl:
             'https://docs.google.com/spreadsheets/d/1ioNEyqRXZa_pwD9OOnF-FoqL0wxncsbXCJkbMKFz5tE/edit?usp=sharing'
     };
