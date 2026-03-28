@@ -1,9 +1,11 @@
 /**
  * Formularz: formId, entry.* — jak wcześniej.
  *
- * Ranking: gid musi wskazywać arkusz z odpowiedziami formularza (w edycji: #gid=… w URL).
- * Jeśli CSV jest pusty lub błąd — w Arkuszach: Udostępnij → Publikuj w internecie →
- * wybierz zakładkę „Відповіді форми” / Responses (albo cały plik), potem CSV.
+ * Ranking na stronie /leaderboard: sheetPublishedCsvUrl (?output=csv).
+ *
+ * Pubhtml (docs.google.com/.../pubhtml) sam z siebie NIE sortuje po Score — to strona Google.
+ * Żeby pubhtml też był po rankingu: druga zakładka + SORT() — patrz plik
+ * google-sheets-posortowany-pubhtml.txt w tym repozytorium.
  */
 (function (w) {
     'use strict';

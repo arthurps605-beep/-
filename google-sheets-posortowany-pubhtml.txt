@@ -1,0 +1,30 @@
+Posortowany widok w pubhtml (Google nie pozwala sortować z zewnątrz — trzeba drugi arkusz w tym samym pliku)
+================================================================================
+
+1. Otwórz tabelę Score w Google Sheets (edycja, nie pubhtml).
+
+2. Na dole dodaj NOWĄ ZAKŁADKĘ, np. „Ranking”.
+
+3. W komórce A1 wpisz nagłówki (jak w odpowiedziach formularza), np.:
+   A1: Позначка часу    B1: Nickname    C1: Score
+
+4. W A2 wklej formułę — ZMIEŃ NAZWĘ ZAKŁADKI na dokładnie taką, jak widzisz u siebie
+   (np. „Відповіді форми (1)” albo „Form Responses 1”).
+
+   Separator argumentów zależy od ustawień Arkuszy (przecinek albo średnik):
+
+   =SORT('NAZWA_ZAKŁADKI'!A2:C500 , 3 , FALSE)    ← często przecinki
+   =SORT('NAZWA_ZAKŁADKI'!A2:C500 ; 3 ; FALSE)    ← często średniki (PL/UA)
+
+   FALSE = malejąco po kolumnie 3 (Score) — wyższy wynik wyżej.
+
+5. Jeśli kolumna z punktami nie jest trzecia (C), zmień „3” na numer kolumny
+   w zaznaczonym zakresie (1 = pierwsza kolumna zakresu).
+
+6. Plik → Udostępnij → Publikuj w internecie → wybierz zakładkę „Ranking” → opublikuj.
+   Skopiuj NOWY link pubhtml — to on będzie pokazywał już posortowaną tabelę.
+
+7. Opcjonalnie: zaktualizuj sheetPublishedCsvUrl w google-form-config.js na CSV tej samej
+   zakładki (z dialogu publikacji), żeby /leaderboard na stronie dalej działał.
+
+Uwaga: strona /leaderboard na Twoim hostingu i tak sortuje po pobraniu CSV — niezależnie od pubhtml.
