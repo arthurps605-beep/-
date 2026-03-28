@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="theme-color" content="#5c6bc0">
     <title>Gra klasyfikacji zapasów</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
     <link rel="stylesheet" href="assets/css/ui-shell.css">
     <link rel="preconnect" href="https://code.jquery.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -57,6 +57,10 @@
                     <h2 class="ui-title">Wynik</h2>
                     <p id="results-score" class="results-score">Punkty: 0</p>
                     <div class="results-buttons">
+                        <button type="button" id="btn-submit-score" class="ui-btn ui-btn-secondary">
+                            Wyślij wynik
+                        </button>
+                        <p id="submit-score-msg" class="ui-muted submit-score-msg" style="display: none"></p>
                         <button type="button" id="btn-play-again" class="ui-btn ui-btn-primary">Zagraj ponownie</button>
                     </div>
                 </div>
@@ -66,7 +70,8 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-    <script src="inventory-leaderboard-storage.js?v=1"></script>
-    <script src="game.js?v=19"></script>
+    <script src="google-form-config.js?v=1"></script>
+    <script src="google-form-submit.js?v=1"></script>
+    <script src="game.js?v=21"></script>
 </body>
 </html>

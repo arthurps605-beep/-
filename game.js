@@ -180,11 +180,12 @@
         destroyDraggableIfAny();
         $('#current-item-slot').empty();
         showScreen('screen-results');
-        var nickTrim = String(currentNick || '').trim();
-        var scoreInt = Math.max(0, Math.floor(Number(currentScore)) || 0);
-        if (nickTrim && typeof persistInventoryLeaderboardScore === 'function') {
-            persistInventoryLeaderboardScore(nickTrim, scoreInt);
-        }
+        resetResultsSubmitUi();
+    }
+
+    function resetResultsSubmitUi() {
+        $('#btn-submit-score').prop('disabled', false).removeClass('is-done');
+        $('#submit-score-msg').hide().text('');
     }
 
     function loadCurrentRound() {
@@ -573,6 +574,34 @@
     function initResultsScreen() {
         $('#btn-play-again').off('click').on('click', function () {
             showScreen('screen-start');
+        });
+
+        $('#btn-submit-score').off('click').on('click', function () {
+            var nick = String(currentNick || '').trim();
+            if (!nick) {
+                $('#submit-score-msg')
+                    .show()
+                    .text('Brak nicku — wpisz nick przed grą.');
+                return;
+            }
+            var scoreInt = Math.max(0, Math.floor(Number(currentScore)) || 0);
+            if (typeof submitScoreToGoogleForm !== 'function') {
+                $('#submit-score-msg')
+                    .show()
+                    .text('Błąd: brak modułu wysyłki (google-form-submit.js).');
+                return;
+            }
+            var r = submitScoreToGoogleForm(nick, scoreInt);
+            if (!r || !r.ok) {
+                $('#submit-score-msg')
+                    .show()
+                    .text(
+                        'Nie skonfigurowano formularza. Uzupełnij google-form-config.js (formId i entry.*).'
+                    );
+                return;
+            }
+            $('#submit-score-msg').show().text('Score submitted!');
+            $('#btn-submit-score').prop('disabled', true).addClass('is-done');
         });
     }
 

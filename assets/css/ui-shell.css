@@ -130,6 +130,32 @@
     filter: brightness(1.05);
 }
 
+.ui-btn-secondary {
+    background: rgba(255, 255, 255, 0.94);
+    color: #1a1a2e;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ui-btn-secondary:hover {
+    filter: brightness(1.03);
+}
+
+.ui-btn-secondary:disabled,
+.ui-btn-secondary.is-done {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.ui-btn-secondary:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.submit-score-msg {
+    margin: 0;
+    min-height: 1.25rem;
+}
+
 a.ui-btn.ui-btn-ghost {
     text-decoration: none;
     box-sizing: border-box;

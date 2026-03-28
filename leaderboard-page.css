@@ -71,6 +71,24 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
+.lb-info-text {
+    margin: 0 0 0.85rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--lb-text);
+    font-weight: 500;
+}
+
+.lb-info-text:last-child {
+    margin-bottom: 0;
+}
+
+.lb-info-muted {
+    font-size: 0.88rem;
+    color: rgba(232, 236, 244, 0.65);
+    font-weight: 400;
+}
+
 .lb-col-rank {
     width: 3.25rem;
     flex-shrink: 0;
