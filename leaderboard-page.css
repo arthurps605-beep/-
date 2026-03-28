@@ -59,6 +59,17 @@ body {
     text-shadow: 0 0 40px rgba(92, 109, 255, 0.35);
 }
 
+.lb-subtitle {
+    margin: 0.65rem 0 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: rgba(232, 236, 244, 0.62);
+    font-weight: 500;
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .table {
     background: var(--lb-glass);
     border-radius: 20px;

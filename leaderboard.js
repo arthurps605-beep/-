@@ -1,6 +1,6 @@
 /**
- * Ranking z opublikowanego CSV (arkusz Google: Udostępnij → Publikuj w internecie → CSV).
- * Sortowanie: wyższy wynik wyżej; ten sam nick — zostaje najlepszy wynik.
+ * Ranking z CSV (to samo źródło co pubhtml, ale ?output=csv).
+ * Sortowanie malejąco po punktach (nie jak kolejność wierszy w Google).
  */
 (function () {
     'use strict';
@@ -50,36 +50,79 @@
             .trim();
     }
 
+    function isTimestampHeader(h) {
+        h = String(h || '').toLowerCase();
+        return (
+            h.indexOf('час') !== -1 ||
+            h.indexOf('позначк') !== -1 ||
+            h.indexOf('timestamp') !== -1 ||
+            h.indexOf('sygnatura') !== -1 ||
+            h.indexOf('data i czas') !== -1 ||
+            h.indexOf('time stamp') !== -1
+        );
+    }
+
     function findColumns(headers) {
         var nickIdx = -1;
         var scoreIdx = -1;
         var i;
         var h;
+        var lower = [];
         for (i = 0; i < headers.length; i++) {
-            h = normalizeCell(headers[i]).toLowerCase();
-            if (
-                nickIdx < 0 &&
-                (h === 'nickname' ||
-                    h === 'nick' ||
-                    h.indexOf('nick') !== -1 ||
-                    h === 'нік' ||
-                    h.indexOf('нік') !== -1)
-            ) {
-                nickIdx = i;
-            }
-            if (
-                scoreIdx < 0 &&
-                (h === 'score' ||
-                    h === 'punkty' ||
-                    h === 'wynik' ||
-                    h === 'бал' ||
-                    h === 'рахунок' ||
-                    h.indexOf('score') !== -1)
-            ) {
+            lower[i] = normalizeCell(headers[i]).toLowerCase();
+        }
+        for (i = 0; i < headers.length; i++) {
+            h = lower[i];
+            if (h === 'score' || h === 'punkty' || h === 'wynik' || h === 'бал' || h === 'рахунок') {
                 scoreIdx = i;
+                break;
             }
         }
+        if (scoreIdx < 0) {
+            for (i = 0; i < headers.length; i++) {
+                h = lower[i];
+                if (h.indexOf('score') !== -1) {
+                    scoreIdx = i;
+                    break;
+                }
+            }
+        }
+        for (i = 0; i < headers.length; i++) {
+            h = lower[i];
+            if (h === 'nickname' || h === 'nick' || h === 'нік') {
+                nickIdx = i;
+                break;
+            }
+        }
+        if (nickIdx < 0) {
+            for (i = 0; i < headers.length; i++) {
+                h = lower[i];
+                if (h.indexOf('nick') !== -1 && h.indexOf('score') === -1) {
+                    nickIdx = i;
+                    break;
+                }
+            }
+        }
+        if (
+            headers.length >= 3 &&
+            isTimestampHeader(lower[0]) &&
+            (nickIdx < 0 || scoreIdx < 0)
+        ) {
+            if (nickIdx < 0) nickIdx = 1;
+            if (scoreIdx < 0) scoreIdx = 2;
+        }
         return { nickIdx: nickIdx, scoreIdx: scoreIdx };
+    }
+
+    /** parseInt("28.03.2026…") === 28 — odrzucamy daty, bierzemy tylko czyste liczby. */
+    function parseScoreCell(raw) {
+        var s = normalizeCell(raw);
+        if (!s) return NaN;
+        if (/^\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b/.test(s)) return NaN;
+        if (/^\d{4}-\d{2}-\d{2}/.test(s)) return NaN;
+        var n = Number(String(s).replace(',', '.').replace(/\s/g, ''));
+        if (!isFinite(n)) return NaN;
+        return Math.round(n);
     }
 
     function escapeHtml(s) {
@@ -151,7 +194,7 @@
             throw new Error('columns');
         }
 
-        var best = {};
+        var out = [];
         var li;
         for (li = 1; li < lines.length; li++) {
             var cells = parseCsvLine(lines[li]);
@@ -160,26 +203,17 @@
             var nick = normalizeCell(cells[col.nickIdx]);
             if (!nick) continue;
 
-            var scoreRaw = normalizeCell(cells[col.scoreIdx]);
-            var score = parseInt(scoreRaw, 10);
+            var score = parseScoreCell(cells[col.scoreIdx]);
             if (isNaN(score)) continue;
 
-            var key = nick.toLowerCase();
-            if (best[key] === undefined || score > best[key].score) {
-                best[key] = { nick: nick, score: score };
-            }
-        }
-
-        var out = [];
-        var k;
-        for (k in best) {
-            if (Object.prototype.hasOwnProperty.call(best, k)) {
-                out.push(best[k]);
-            }
+            out.push({ nick: nick, score: score });
         }
 
         out.sort(function (a, b) {
-            return b.score - a.score;
+            if (b.score !== a.score) return b.score - a.score;
+            return String(a.nick).localeCompare(String(b.nick), undefined, {
+                sensitivity: 'base'
+            });
         });
 
         return out;

@@ -12,8 +12,8 @@
         entryNickname: 'entry.195353444',
         entryScore: 'entry.1830577080',
 
-        /** CSV opublikowanego arkusza z odpowiedziami (nie pierwszy pusty arkusz). */
+        /** Ten sam dokument co pubhtml — wersja CSV do rankingu (?output=csv). */
         sheetPublishedCsvUrl:
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1Mms6EONOtmaRIx69Xjqw4Zk1Wn8bsY6t0iAq5YixJiWRwbTqk3UrRTSzaGgkVyYKdPYmViG_OF03/pub?gid=326377582&single=true&output=csv'
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1Mms6EONOtmaRIx69Xjqw4Zk1Wn8bsY6t0iAq5YixJiWRwbTqk3UrRTSzaGgkVyYKdPYmViG_OF03/pub?output=csv'
     };
 })(typeof window !== 'undefined' ? window : this);
