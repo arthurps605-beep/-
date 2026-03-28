@@ -328,6 +328,20 @@
         return bestArea > 0 ? bestBin : null;
     }
 
+    /** Розміри/обрізка окремих PNG (шприц, ШВЛ, широкі фото). */
+    function itemImageLayout(imageFile) {
+        if (imageFile === 'ved_e_syringe.png') {
+            return { imgClass: 'item-image--syringe', wrapCrop: false };
+        }
+        if (imageFile === 'ved_v_ventilator.png') {
+            return { imgClass: 'item-image--ventilator', wrapCrop: false };
+        }
+        if (imageFile === 'ved_e_antibiotics.png' || imageFile === 'ved_e_bandage.png') {
+            return { imgClass: '', wrapCrop: true };
+        }
+        return { imgClass: '', wrapCrop: false };
+    }
+
     function renderCurrentItem() {
         cancelAdvanceAfterDropTimer();
         processingDrop = false;
@@ -339,16 +353,21 @@
         if (!item) return;
 
         var cat = item.correctCategory;
+        var layout = itemImageLayout(item.imageFile);
         var html = '';
         html += '<div class="item-card item-container" data-correct-category="' + cat + '">';
+        if (layout.wrapCrop) {
+            html += '<span class="item-img-wrap item-img-wrap--crop-sides">';
+        }
         html +=
-            '<img class="item-image" src="' +
+            '<img class="item-image' +
+            (layout.imgClass ? ' ' + layout.imgClass : '') +
+            '" src="' +
             escapeHtml(ITEM_IMAGE_BASES[0] + item.imageFile) +
             '" alt="" draggable="false">';
-        html +=
-            '<p class="item-name-label">' +
-            escapeHtml(String(item.name || '')) +
-            '</p>';
+        if (layout.wrapCrop) {
+            html += '</span>';
+        }
         html += '</div>';
 
         $('#current-item-slot').html(html);
