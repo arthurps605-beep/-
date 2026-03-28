@@ -10,7 +10,8 @@
         entryNickname: 'entry.195353444',
         entryScore: 'entry.1830577080',
 
-        /** Obowiązkowe dla strony /leaderboard — opublikowany CSV (nie link „edytuj”). */
-        sheetPublishedCsvUrl: ''
+        /** Opublikowany CSV (ten sam dokument co pubhtml, ale output=csv). */
+        sheetPublishedCsvUrl:
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1Mms6EONOtmaRIx69Xjqw4Zk1Wn8bsY6t0iAq5YixJiWRwbTqk3UrRTSzaGgkVyYKdPYmViG_OF03/pub?gid=0&single=true&output=csv'
     };
 })(typeof window !== 'undefined' ? window : this);
