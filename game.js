@@ -22,7 +22,8 @@
     var BIN_IMAGE_BASES = ['assets/subjekt/bins/'];
     var gamePhase = 'round';
     var advanceAfterDropTimerId = null;
-    var dropClickSound = null;
+    var dropClickSoundTemplate = null;
+    var DROP_CLICK_SOUND_SRC = 'assets/mixkit-classic-click-1117.wav';
 
     /** Zapamiętane nicki po udanej wysyłce (to urządzenie; bez tego nie da się odczytać arkusza z przeglądarki). */
     var LS_USED_NICKS_KEY = 'gra_inventory_game_used_nicks_v1';
@@ -61,22 +62,25 @@
         } catch (err) {}
     }
 
-    function ensureDropClickSound() {
-        if (dropClickSound) return dropClickSound;
+    function ensureDropClickSoundTemplate() {
+        if (dropClickSoundTemplate) return dropClickSoundTemplate;
         try {
-            dropClickSound = new Audio('assets/mixkit-classic-click-1117.wav');
-            dropClickSound.preload = 'auto';
+            dropClickSoundTemplate = new Audio(DROP_CLICK_SOUND_SRC);
+            dropClickSoundTemplate.preload = 'auto';
+            dropClickSoundTemplate.volume = 0.9;
         } catch (err) {
-            dropClickSound = null;
+            dropClickSoundTemplate = null;
         }
-        return dropClickSound;
+        return dropClickSoundTemplate;
     }
 
     function playDropClickSound() {
-        var snd = ensureDropClickSound();
-        if (!snd) return;
+        var tpl = ensureDropClickSoundTemplate();
+        if (!tpl) return;
         try {
+            var snd = tpl.cloneNode();
             snd.currentTime = 0;
+            snd.volume = tpl.volume;
             var p = snd.play();
             if (p && typeof p.catch === 'function') p.catch(function () {});
         } catch (err) {}
@@ -718,7 +722,7 @@
     }
 
     $(function () {
-        ensureDropClickSound();
+        ensureDropClickSoundTemplate();
         initStartScreen();
         initGameScreen();
         initResultsScreen();
