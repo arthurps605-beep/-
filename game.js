@@ -22,6 +22,7 @@
     var BIN_IMAGE_BASES = ['assets/subjekt/bins/'];
     var gamePhase = 'round';
     var advanceAfterDropTimerId = null;
+    var dropClickSound = null;
 
     /** Zapamiętane nicki po udanej wysyłce (to urządzenie; bez tego nie da się odczytać arkusza z przeglądarki). */
     var LS_USED_NICKS_KEY = 'gra_inventory_game_used_nicks_v1';
@@ -57,6 +58,27 @@
                 arr.push(k);
             }
             localStorage.setItem(LS_USED_NICKS_KEY, JSON.stringify(arr));
+        } catch (err) {}
+    }
+
+    function ensureDropClickSound() {
+        if (dropClickSound) return dropClickSound;
+        try {
+            dropClickSound = new Audio('assets/mixkit-classic-click-1117.wav');
+            dropClickSound.preload = 'auto';
+        } catch (err) {
+            dropClickSound = null;
+        }
+        return dropClickSound;
+    }
+
+    function playDropClickSound() {
+        var snd = ensureDropClickSound();
+        if (!snd) return;
+        try {
+            snd.currentTime = 0;
+            var p = snd.play();
+            if (p && typeof p.catch === 'function') p.catch(function () {});
         } catch (err) {}
     }
 
@@ -479,6 +501,7 @@
             processingDrop = true;
             var correctCat = $card.data('correctCategory');
             var ok = droppedBin === correctCat;
+            playDropClickSound();
 
             if (ok) {
                 currentScore += POINTS_CORRECT;
@@ -695,6 +718,7 @@
     }
 
     $(function () {
+        ensureDropClickSound();
         initStartScreen();
         initGameScreen();
         initResultsScreen();
