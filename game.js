@@ -2,7 +2,7 @@
     'use strict';
 
     var ROUND_DURATION_SEC = 30;
-    var BREAK_DURATION_SEC = 10;
+    var BREAK_DURATION_SEC = 5;
     /* 1 poprawnie przeciągnięty przedmiot = 1 pkt; błędne upuszczenie = 0 pkt (bez kar). */
     var POINTS_CORRECT = 1;
     var POINTS_WRONG = 0;
